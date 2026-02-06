@@ -1,3 +1,6 @@
+// Hugo García Sánchez (930108)
+// Óscar Grimal Torres (926897)
+
 #include "rational.h"
 
 // Auxiliares, privadas
@@ -8,9 +11,13 @@ int Rational::mcd(int a, int b)
 
 void Rational::reduce()
 {
-	int divisor = mcd(abs(num), abs(den));
+	int divisor = mcd(
+		(num < 0 ? -num : num),
+		(den < 0 ? -den : den));
+
 	num /= divisor;
 	den /= divisor;
+
 	if (den < 0)
 	{
 		num = -num;
@@ -28,12 +35,6 @@ Rational::Rational()
 
 Rational::Rational(int num, int den)
 {
-	if (den == 0)
-	{
-		std::cerr << "Error: Inicialización con denominador cero." << std::endl;
-		return; // No inicializa
-	}
-
 	this->num = num;
 	this->den = den;
 	reduce();
@@ -75,26 +76,20 @@ Rational Rational::operator-(const Rational &other) const
 	return result;
 }
 
-Rational Rational::operator*(const Rational &other) const
+Rational operator*(const Rational &left, const Rational &right)
 {
 	Rational result;
-	result.num = num * other.num;
-	result.den = den * other.den;
+	result.num = left.num * right.num;
+	result.den = left.den * right.den;
 	result.reduce();
 	return result;
 }
 
-Rational Rational::operator/(const Rational &other) const
+Rational operator/(const Rational &left, const Rational &right)
 {
-	if (other.num == 0)
-	{
-		std::cerr << "Error: División por cero." << std::endl;
-		return Rational(); // Devuelve 0
-	}
-
 	Rational result;
-	result.num = num * other.den;
-	result.den = den * other.num;
+	result.num = left.num * right.den;
+	result.den = left.den * right.num;
 	result.reduce();
 	return result;
 }

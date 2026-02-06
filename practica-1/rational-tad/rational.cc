@@ -1,3 +1,6 @@
+// Hugo García Sánchez (930108)
+// Óscar Grimal Torres (926897)
+
 #include "rational.h"
 
 // Auxiliares, privadas
@@ -8,9 +11,13 @@ int mcd(int a, int b)
 
 void reduce(Rational &r)
 {
-	int divisor = mcd(abs(r.num), abs(r.den));
+	int divisor = mcd(
+		(r.num < 0 ? -r.num : r.num),
+		(r.den < 0 ? -r.den : r.den));
+	
 	r.num /= divisor;
 	r.den /= divisor;
+	
 	if (r.den < 0)
 	{
 		r.num = -r.num;
@@ -28,12 +35,6 @@ void init(Rational &r)
 
 void init(Rational &r, int num, int den)
 {
-	if (den == 0)
-	{
-		std::cerr << "Error: Inicialización con denominador cero." << std::endl;
-		return; // No inicializa
-	}
-
 	r.num = num;
 	r.den = den;
 	reduce(r);
@@ -84,13 +85,6 @@ Rational mul(const Rational &r1, const Rational &r2)
 
 Rational div(const Rational &r1, const Rational &r2)
 {
-	if (r2.num == 0)
-	{
-		std::cerr << "Error: división por cero." << std::endl;
-		Rational r; init(r);
-		return r; // Devuelve 0
-	}
-
 	Rational result;
 	result.num = r1.num * r2.den;
 	result.den = r1.den * r2.num;

@@ -1,4 +1,6 @@
 // Solución del tipo Rational como TAD
+// Hugo García Sánchez (930108)
+// Óscar Grimal Torres (926897)
 
 #pragma once
 #include <iostream>
@@ -12,7 +14,7 @@ private:
 	/** Numerador y denominador de la fracción */
 	int num, den;
 
-	// Simplifica la fracción dada
+	// Auxiliares
 	friend void reduce(Rational &r);
 
 public:
@@ -67,7 +69,7 @@ void read(std::istream &is, Rational &r);
  * Suma dos numeros racionales
  * @param r1 Sumando 1
  * @param r2 Sumando 2
- * @return Resultado de la suma
+ * @returns Resultado de la suma
  */
 Rational add(const Rational &r1, const Rational &r2);
 
@@ -75,7 +77,7 @@ Rational add(const Rational &r1, const Rational &r2);
  * Resta dos numeros racionales
  * @param r1 Minuendo
  * @param r2 Sustraendo
- * @return Resultado de la resta
+ * @returns Resultado de la resta
  */
 Rational sub(const Rational &r1, const Rational &r2);
 
@@ -83,7 +85,7 @@ Rational sub(const Rational &r1, const Rational &r2);
  * Multiplica dos numeros racionales
  * @param r1 Factor 1
  * @param r2 Factor 2
- * @return Resultado de la multiplicación
+ * @returns Resultado de la multiplicación
  */
 Rational mul(const Rational &r1, const Rational &r2);
 
@@ -91,7 +93,7 @@ Rational mul(const Rational &r1, const Rational &r2);
  * Divide dos numeros racionales
  * @param r1 Dividendo
  * @param r2 Divisor
- * @return Resultado de la división
+ * @returns Resultado de la división
  */
 Rational div(const Rational &r1, const Rational &r2);
 
@@ -101,7 +103,7 @@ Rational div(const Rational &r1, const Rational &r2);
  * Compara dos numeros racionales
  * @param r1 Operando 1
  * @param r2 Operando 2
- * @return `true` si son iguales, `false` en caso contrario
+ * @returns `true` si son iguales, `false` en caso contrario
  */
 bool equal(const Rational &r1, const Rational &r2);
 
@@ -109,7 +111,7 @@ bool equal(const Rational &r1, const Rational &r2);
  * Compara dos numeros racionales
  * @param r1 Operando 1
  * @param r2 Operando 2
- * @return `true` si r1 < r2, `false` en caso contrario
+ * @returns `true` si r1 < r2, `false` en caso contrario
  */
 bool lesser_than(const Rational &r1, const Rational &r2);
 
@@ -117,6 +119,6 @@ bool lesser_than(const Rational &r1, const Rational &r2);
  * Compara dos numeros racionales
  * @param r1 Operando 1
  * @param r2 Operando 2
- * @return `true` si r1 > r2, `false` en caso contrario
+ * @returns `true` si r1 > r2, `false` en caso contrario
  */
 bool greater_than(const Rational &r1, const Rational &r2);

@@ -1,4 +1,6 @@
 // Solución del tipo Rational como clase
+// Hugo García Sánchez (930108)
+// Óscar Grimal Torres (926897)
 
 #pragma once
 #include <iostream>
@@ -8,7 +10,6 @@
  */
 class Rational
 {
-private:
 	/** Numerador y denominador de la fraccion */
 	int num, den;
 
@@ -17,18 +18,21 @@ private:
 	void reduce();
 
 public:
-
 	// Constructores
 	Rational();
 	Rational(int num, int den);
 
-	// Funciones públicas
+	// Entrada/salida
 	void write(std::ostream& os) const;
 	void read(std::istream& is);
+	
+	// Aritméticas: operan este racional con otro y devuelven el resultado
 	Rational add(const Rational& other) const;
 	Rational sub(const Rational& other) const;
 	Rational mul(const Rational& other) const;
 	Rational div(const Rational& other) const;
+
+	// Lógicas: comparan este racional con otro y devuelven el resultado
 	bool equal(const Rational& other) const;
 	bool lesser_than(const Rational& other) const;
 	bool greater_than(const Rational& other) const;
