@@ -8,7 +8,7 @@ int Rational::mcd(int a, int b)
 
 void Rational::reduce()
 {
-	int divisor = mcd(abs(num), abs(den));
+	int divisor = mcd((num < 0 ? -num : num), (den < 0 ? -den : den));
 	num /= divisor;
 	den /= divisor;
 	if (den < 0)
