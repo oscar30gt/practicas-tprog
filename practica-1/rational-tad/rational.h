@@ -14,10 +14,11 @@ private:
 	/** Numerador y denominador de la fracción */
 	int num, den;
 
-	// Auxiliares
+	// Auxiliares privadas
 	friend void reduce(Rational &r);
 
 public:
+	// Funciones friend
 	friend void init(Rational &r);
 	friend void init(Rational &r, int num, int den);
 	friend void write(std::ostream &os, const Rational &r);

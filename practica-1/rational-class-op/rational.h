@@ -26,13 +26,14 @@ public:
 	friend std::ostream &operator<<(std::ostream &os, const Rational &r);
 	friend std::istream &operator>>(std::istream &is, Rational &r);
 
-	// Operaciones aritmeticas
+	// Operaciones aritmeticas: operan este racional con otro y devuelven el resultado. 
+	// Suma y resta se implementan como métodos y multiplicación y división como funciones externas a la clase
 	Rational operator+(const Rational &other) const;
 	Rational operator-(const Rational &other) const;
 	friend Rational operator*(const Rational &left, const Rational &right);
 	friend Rational operator/(const Rational &left, const Rational &right);
 
-	// Operaciones logicas
+	// Operaciones logicas: comparan este racional con otro y devuelven el resultado
 	bool operator==(const Rational &other) const;
 	bool operator<(const Rational &other) const;
 	bool operator>(const Rational &other) const;

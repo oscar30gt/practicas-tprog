@@ -15,9 +15,11 @@ void Rational::reduce()
 		(num < 0 ? -num : num),
 		(den < 0 ? -den : den));
 
+	// Dividimos numerador y denominador por el máximo común divisor
 	num /= divisor;
 	den /= divisor;
 	
+	// Si el denominador es negativo, cambiamos el signo del numerador y del denominador
 	if (den < 0)
 	{
 		num = -num;
@@ -37,6 +39,7 @@ Rational::Rational(int num, int den)
 {
 	this->num = num;
 	this->den = den;
+	// Simplificamos el número racional
 	reduce();
 }
 
@@ -49,8 +52,10 @@ void Rational::write(std::ostream &os) const
 
 void Rational::read(std::istream &is)
 {
+	// Leemos el número racional de la forma num/den
 	char slash;
 	is >> num >> slash >> den;
+	// Simplificamos el número racional
 	reduce();
 }
 
@@ -58,36 +63,44 @@ void Rational::read(std::istream &is)
 
 Rational Rational::add(const Rational &other) const
 {
+	// Para sumar dos números racionales, sumamos los numeradores multiplicados por el otro denominador y multiplicamos los denominadores
 	Rational result;
 	result.num = num * other.den + other.num * den;
 	result.den = den * other.den;
+	// Simplificamos el número racional
 	result.reduce();
 	return result;
 }
 
 Rational Rational::sub(const Rational &other) const
 {
+	// Para restar dos números racionales, restamos los numeradores multiplicados por el otro denominador y multiplicamos los denominadores
 	Rational result;
 	result.num = num * other.den - other.num * den;
 	result.den = den * other.den;
+	// Simplificamos el número racional
 	result.reduce();
 	return result;
 }
 
 Rational Rational::mul(const Rational &other) const
 {
+	// Para multiplicar dos números racionales, multiplicamos los numeradores y los denominadores
 	Rational result;
 	result.num = num * other.num;
 	result.den = den * other.den;
+	// Simplificamos el número racional
 	result.reduce();
 	return result;
 }
 
 Rational Rational::div(const Rational &other) const
 {
+	// Para dividir dos números racionales, realizamos el producto cruzado de los numeradores y denominadores
 	Rational result;
 	result.num = num * other.den;
 	result.den = den * other.num;
+	// Simplificamos el número racional
 	result.reduce();
 	return result;
 }
