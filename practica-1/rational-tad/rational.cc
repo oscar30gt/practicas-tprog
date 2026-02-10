@@ -39,6 +39,7 @@ void init(Rational &r, int num, int den)
 {
 	r.num = num;
 	r.den = den;
+
 	// Simplificamos el número racional
 	reduce(r);
 }
@@ -55,6 +56,7 @@ void read(std::istream &is, Rational &r)
 	// Leemos el número racional de la forma num/den
 	char slash;
 	is >> r.num >> slash >> r.den;
+
 	// Simplificamos el número racional
 	reduce(r);
 }
@@ -67,6 +69,7 @@ Rational add(const Rational &r1, const Rational &r2)
 	Rational result;
 	result.num = r1.num * r2.den + r2.num * r1.den;
 	result.den = r1.den * r2.den;
+
 	// Simplificamos el número racional
 	reduce(result);
 	return result;
@@ -78,6 +81,7 @@ Rational sub(const Rational &r1, const Rational &r2)
 	Rational result;
 	result.num = r1.num * r2.den - r2.num * r1.den;
 	result.den = r1.den * r2.den;
+
 	// Simplificamos el número racional
 	reduce(result);
 	return result;
@@ -89,6 +93,7 @@ Rational mul(const Rational &r1, const Rational &r2)
 	Rational result;
 	result.num = r1.num * r2.num;
 	result.den = r1.den * r2.den;
+
 	// Simplificamos el número racional
 	reduce(result);
 	return result;
@@ -100,6 +105,7 @@ Rational div(const Rational &r1, const Rational &r2)
 	Rational result;
 	result.num = r1.num * r2.den;
 	result.den = r1.den * r2.num;
+	
 	// Simplificamos el número racional
 	reduce(result);
 	return result;
