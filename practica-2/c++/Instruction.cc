@@ -1,12 +1,32 @@
+/**
+ * @file Instruction.cc
+ *
+ * @authors
+ * Hugo García Sánchez (930108)
+ * Óscar Grimal Torres (926897)
+ */
+
 #include "Instruction.h"
 #include <iostream>
+
+// ==========================================
+// CLASES BASE
+// ==========================================
 
 std::string Instruction::toString() const
 {
     return instructionName;
 }
 
-//=========================================
+Instruction::Instruction(std::string instName)
+    : instructionName(instName) {}
+
+InstructionWithImmediate::InstructionWithImmediate(std::string instName, int immVal)
+    : Instruction(instName + " " + std::to_string(immVal)), immediateValue(immVal) {}
+
+// ==========================================
+// DEFINICION DE INSTRUCCIONES
+// ==========================================
 
 int Add::execute(std::stack<int> &stack) const
 {
