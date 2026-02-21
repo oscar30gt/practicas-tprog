@@ -1,3 +1,4 @@
+
 /**
  * @file Program.java
  *
@@ -15,46 +16,37 @@ import java.util.Stack;
 /**
  * Clase que representa un programa ejecutable sobre una pila de enteros.
  *
- * @note
- * Este "programa" no contiene instrucciones. En su lugar, considera instanciar
- * algunos de los programas predefinidos (`AddProgram`, `CountdownProgram`, `FactorialProgram`)
- * o crear otros heredando de esta clase.
+ * @note Este "programa" no contiene instrucciones. En su lugar, considera
+ *       instanciar
+ *       algunos de los programas predefinidos (`AddProgram`,
+ *       `CountdownProgram`, `FactorialProgram`)
+ *       o crear otros heredando de esta clase.
  */
-class Program
-{
+class Program {
     /** Conjunto de instrucciones ejecutables */
     protected final Instruction[] instructionSet;
 
-    /** n total de instrucciones */
-    protected final int instructionCount;
-
     /**
-     * Contructor protegido para crear programas a partir de un conjunto de instrucciones.
-     * @param instSet Conjunto de instrucciones del programa.
+     * Contructor protegido para crear programas a partir de un conjunto de
+     * instrucciones.
+     * 
+     * @param instSet   Conjunto de instrucciones del programa.
      * @param instCount Cantidad de instrucciones en el conjunto.
      */
-    protected Program(Instruction[] instSet, int instCount)
-    {
+    protected Program(Instruction[] instSet) {
         this.instructionSet = instSet;
-        this.instructionCount = instCount;
     }
 
-    public Program()
-    {
+    public Program() {
         this.instructionSet = null;
-        this.instructionCount = 0;
     }
 
     /**
-     * Ejecuta el programa sobre la pila dada.
-     * @param stack La pila de enteros sobre la que se ejecutará el programa.
-     *              No es necesario que esté vacía: su contenido puede ser
-     *              utilizado para pasar argumentos al programa.
+     * Ejecuta el programa.
      */
-    public void run(Stack<Integer> stack)
-    {
-        for (int pc = 0; pc < instructionCount; pc++)
-        {
+    public void run() {
+        Stack<Integer> stack = new Stack<>();
+        for (int pc = 0; pc < instructionSet.length; pc++) {
             int targetLine = instructionSet[pc].execute(stack);
             if (targetLine >= 0) // Si la instrucción tiene como resultado un salto,
                                  // actualizamos el contador de programa.
@@ -63,14 +55,12 @@ class Program
     }
 
     @Override
-    public String toString()
-    {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < instructionCount; i++)
-        {
-            sb.append(String.format("%3d   %s\n", i + 1, instructionSet[i].toString()));
+    public String toString() {
+        String text = "";
+        for (int i = 0; i < instructionSet.length; i++) {
+            text += String.format("%3d   %s\n", i + 1, instructionSet[i].toString());
         }
-        return sb.toString();
+        return text;
     }
 }
 
@@ -82,16 +72,14 @@ class Program
  * Programa que solicita dos números enteros y los suma,
  * imprimiendo el resultado obtenido.
  */
-class AddProgram extends Program
-{
-    public AddProgram()
-    {
-        super(new Instruction[]{
+final class AddProgram extends Program {
+    public AddProgram() {
+        super(new Instruction[] {
                 new Read(),
                 new Read(),
                 new Add(),
                 new Write()
-        }, 4);
+        });
     }
 }
 
@@ -99,11 +87,9 @@ class AddProgram extends Program
  * Programa que solicita un número entero y muestra una cuenta atras desde
  * ese número hasta cero.
  */
-class CountdownProgram extends Program
-{
-    public CountdownProgram()
-    {
-        super(new Instruction[]{
+final class CountdownProgram extends Program {
+    public CountdownProgram() {
+        super(new Instruction[] {
                 new Read(),
                 new Dup(),
                 new Write(),
@@ -111,18 +97,16 @@ class CountdownProgram extends Program
                 new Add(),
                 new Dup(),
                 new JumpIf(1)
-        }, 7);
+        });
     }
 }
 
 /**
  * Programa que solicita un número entero y muestra su factorial.
  */
-class FactorialProgram extends Program
-{
-    public FactorialProgram()
-    {
-        super(new Instruction[]{
+final class FactorialProgram extends Program {
+    public FactorialProgram() {
+        super(new Instruction[] {
                 new Push(1),
                 new Read(),
                 new Swap(),
@@ -137,6 +121,6 @@ class FactorialProgram extends Program
                 new JumpIf(2),
                 new Swap(),
                 new Write()
-        }, 14);
+        });
     }
 }

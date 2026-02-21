@@ -1,3 +1,4 @@
+
 /**
  * @file Instruction.java
  *
@@ -17,29 +18,28 @@ import java.util.Scanner;
  * Clase abstracta que representa una instrucción ejecutable sobre
  * una pila de enteros de una máquina virtual.
  */
-abstract class Instruction
-{
+abstract class Instruction {
     /** Nombre amigable de la instrucción */
     protected final String instructionName;
 
-    public Instruction(String instName)
-    {
+    public Instruction(String instName) {
         this.instructionName = instName;
     }
 
     /**
      * Devuelve una representación en forma de cadena de la instrucción.
      */
-    public String toString()
-    {
+    public String toString() {
         return instructionName;
     }
 
     /**
      * Ejecuta la instrucción sobre la pila dada.
+     * 
      * @param stack La pila de enteros sobre la que se ejecutará la instrucción.
-     * @returns Nueva posición del contador de programa después de ejecutar la instrucción.
-     * `-1` para seguir con la ejecución normal del programa
+     * @returns Nueva posición del contador de programa después de ejecutar la
+     *          instrucción.
+     *          `-1` para seguir con la ejecución normal del programa
      */
     public abstract int execute(Stack<Integer> stack);
 }
@@ -47,13 +47,11 @@ abstract class Instruction
 /**
  * Clase abstracta que representa una instrucción con valor inmediato.
  */
-abstract class InstructionWithImmediate extends Instruction
-{
+abstract class InstructionWithImmediate extends Instruction {
     /** Valor inmediato de la instrucción */
     protected final int immediateValue;
 
-    public InstructionWithImmediate(String instName, int immVal)
-    {
+    public InstructionWithImmediate(String instName, int immVal) {
         super(instName + " " + immVal);
         this.immediateValue = immVal;
     }
@@ -64,22 +62,14 @@ abstract class InstructionWithImmediate extends Instruction
 // ==========================================
 
 // Add: Suma los dos elementos superiores de la pila,
-//      los elimina y deja el resultado en la cima de la pila.
-final class Add extends Instruction
-{
-    public Add()
-    {
+// los elimina y deja el resultado en la cima de la pila.
+final class Add extends Instruction {
+    public Add() {
         super("add");
     }
 
     @Override
-    public int execute(Stack<Integer> stack)
-    {
-        if (stack.size() < 2)
-        {
-            throw new RuntimeException("Not enough values on the stack for 'add' instruction.");
-        }
-
+    public int execute(Stack<Integer> stack) {
         int a = stack.pop();
         int b = stack.pop();
         stack.push(a + b);
@@ -87,20 +77,17 @@ final class Add extends Instruction
     }
 }
 
-// Read: Lee un entero desde la entrada estándar y lo 
-//       coloca en la cima de la pila.
-final class Read extends Instruction
-{
+// Read: Lee un entero desde la entrada estándar y lo
+// coloca en la cima de la pila.
+final class Read extends Instruction {
     private static Scanner scanner = new Scanner(System.in);
 
-    public Read()
-    {
+    public Read() {
         super("read");
     }
 
     @Override
-    public int execute(Stack<Integer> stack)
-    {
+    public int execute(Stack<Integer> stack) {
         System.out.print("? ");
         int value = scanner.nextInt();
         stack.push(value);
@@ -109,22 +96,14 @@ final class Read extends Instruction
 }
 
 // Write: Elimina el elemento superior de la pila y lo escribe
-//        en la salida estándar.
-final class Write extends Instruction
-{
-    public Write()
-    {
+// en la salida estándar.
+final class Write extends Instruction {
+    public Write() {
         super("write");
     }
 
     @Override
-    public int execute(Stack<Integer> stack)
-    {
-        if (stack.empty())
-        {
-            throw new RuntimeException("No values on the stack to write.");
-        }
-
+    public int execute(Stack<Integer> stack) {
         int value = stack.pop();
         System.out.println(value);
         return -1;
@@ -132,81 +111,54 @@ final class Write extends Instruction
 }
 
 // Push: Coloca el valor inmediato en la cima de la pila.
-final class Push extends InstructionWithImmediate
-{
-    public Push(int val)
-    {
+final class Push extends InstructionWithImmediate {
+    public Push(int val) {
         super("push", val);
     }
 
     @Override
-    public int execute(Stack<Integer> stack)
-    {
+    public int execute(Stack<Integer> stack) {
         stack.push(immediateValue);
         return -1;
     }
 }
 
 // Dup: Duplica la cima de la pila
-final class Dup extends Instruction
-{
-    public Dup()
-    {
+final class Dup extends Instruction {
+    public Dup() {
         super("dup");
     }
 
     @Override
-    public int execute(Stack<Integer> stack)
-    {
-        if (stack.empty())
-        {
-            throw new RuntimeException("No values on the stack to duplicate.");
-        }
-
+    public int execute(Stack<Integer> stack) {
         stack.push(stack.peek());
         return -1;
     }
 }
 
 // JumpIf: Elimina el elemento superior de la pila y, si es distinto de cero,
-//         salta a la posición dada por el valor inmediato.
-final class JumpIf extends InstructionWithImmediate
-{
-    public JumpIf(int target)
-    {
+// salta a la posición dada por el valor inmediato.
+final class JumpIf extends InstructionWithImmediate {
+    public JumpIf(int target) {
         super("jumpif", target);
     }
 
     @Override
-    public int execute(Stack<Integer> stack)
-    {
-        if (stack.empty())
-        {
-            throw new RuntimeException("No values on the stack for 'jumpif' instruction.");
-        }
-
+    public int execute(Stack<Integer> stack) {
         int value = stack.pop();
         return value >= 0 ? immediateValue : -1;
     }
 }
 
 // Mul: Multiplica los dos elementos superiores de la pila,
-//      los elimina y deja el resultado en la cima de la pila.
-final class Mul extends Instruction
-{
-    public Mul()
-    {
+// los elimina y deja el resultado en la cima de la pila.
+final class Mul extends Instruction {
+    public Mul() {
         super("mul");
     }
 
     @Override
-    public int execute(Stack<Integer> stack)
-    {
-        if (stack.size() < 2)
-        {
-            throw new RuntimeException("Not enough values on the stack for 'mul' instruction.");
-        }
-
+    public int execute(Stack<Integer> stack) {
         int a = stack.pop();
         int b = stack.pop();
         stack.push(a * b);
@@ -215,21 +167,13 @@ final class Mul extends Instruction
 }
 
 // Swap: Intercambia los dos elementos superiores de la pila.
-final class Swap extends Instruction
-{
-    public Swap()
-    {
+final class Swap extends Instruction {
+    public Swap() {
         super("swap");
     }
 
     @Override
-    public int execute(Stack<Integer> stack)
-    {
-        if (stack.size() < 2)
-        {
-            throw new RuntimeException("Not enough values on the stack to swap.");
-        }
-
+    public int execute(Stack<Integer> stack) {
         int a = stack.pop();
         int b = stack.pop();
         stack.push(a);
@@ -239,22 +183,14 @@ final class Swap extends Instruction
 }
 
 // Over: Duplica el segundo elemento superior de la pila, colocandolo
-//       en la cima de la misma.
-final class Over extends Instruction
-{
-    public Over()
-    {
+// en la cima de la misma.
+final class Over extends Instruction {
+    public Over() {
         super("over");
     }
 
     @Override
-    public int execute(Stack<Integer> stack)
-    {
-        if (stack.size() < 2)
-        {
-            throw new RuntimeException("Not enough values on the stack for 'over' instruction.");
-        }
-
+    public int execute(Stack<Integer> stack) {
         int a = stack.pop();
         int b = stack.peek();
         stack.push(a);

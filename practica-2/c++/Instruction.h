@@ -24,10 +24,10 @@ class Instruction
 protected:
     /** Nombre amigable de la instrucción */
     const std::string instructionName;
+    Instruction(std::string instName);
 
 public:
-    Instruction(std::string instName);
-    ~Instruction() = default;
+    virtual ~Instruction() = default;
 
     /**
      * Devuelve una representación en forma de cadena de la instrucción.

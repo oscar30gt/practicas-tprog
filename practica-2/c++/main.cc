@@ -8,7 +8,6 @@
 
 #include "Program.h"
 #include "Instruction.h"
-#include <stack>
 #include <iostream>
 
 using namespace std;
@@ -20,7 +19,6 @@ using namespace std;
  */
 int main()
 {
-    stack<int> stack;
     AddProgram addProgram;
     CountdownProgram countdownProgram;
     FactorialProgram factorialProgram;
@@ -28,17 +26,17 @@ int main()
     // AddProgram
     cout << "\033[33mEjecutando AddProgram:\033[0m\n"
          << addProgram << endl;
-    addProgram.run(stack);
+    addProgram.run();
 
     // CountdownProgram
     cout << "\n\n\033[33mEjecutando CountdownProgram:\033[0m\n"
          << countdownProgram << endl;
-    countdownProgram.run(stack);
+    countdownProgram.run();
 
     // FactorialProgram
     cout << "\n\n\033[33mEjecutando FactorialProgram:\033[0m\n"
          << factorialProgram << endl;
-    factorialProgram.run(stack);
+    factorialProgram.run();
 
     return 0;
 }

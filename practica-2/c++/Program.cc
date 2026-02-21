@@ -9,6 +9,7 @@
 #include "Program.h"
 #include "Instruction.h"
 #include <iomanip>
+#include <stack>
 
 // ==========================================
 // CLASE BASE
@@ -23,14 +24,15 @@ Program::Program(const Instruction **instSet, int instCount)
 Program::~Program()
 {
     // El destructor de `Program` es responsable de liberar la memoria de las instrucciones
-    // y lo usan todos los programas predefinidos, no es virtual.
+    // y es comun para todos los programas predefinidos, no es virtual.
     for (unsigned i = 0; i < instructionCount; i++)
         delete instructionSet[i];
     delete[] instructionSet;
 }
 
-void Program::run(std::stack<int> &stack)
+void Program::run()
 {
+    std::stack<int> stack;
     for (unsigned pc = 0; pc < instructionCount; pc++)
     {
         int targetLine = instructionSet[pc]->execute(stack);

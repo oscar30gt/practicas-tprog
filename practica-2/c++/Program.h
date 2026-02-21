@@ -10,7 +10,6 @@
 
 #include <iostream>
 #include "Instruction.h"
-#include <stack>
 
 // ==========================================
 // CLASE BASE
@@ -39,18 +38,15 @@ protected:
      * @param instCount Cantidad de instrucciones en el conjunto.
      */
     Program(const Instruction **instSet, int instCount);
-
+    
 public:
     Program();
-    ~Program();
+    virtual ~Program();
 
     /**
-     * Ejecuta el programa sobre la pila dada.
-     * @param stack La pila de enteros sobre la que se ejecutará el programa.
-     *              No es necesario que esté vacía: su contenido puede ser
-     *              utilizado para pasar argumentos al programa.
+     * Ejecuta el programa.
      */
-    void run(std::stack<int> &stack);
+    void run();
 
     friend std::ostream &operator<<(std::ostream &os, const Program &program);
 };
@@ -69,7 +65,7 @@ std::ostream &operator<<(std::ostream &os, const Program &program);
  * Programa que solicita dos números enteros y los suma,
  * imprimiendo el resultado obtenido.
  */
-class AddProgram : public Program
+class AddProgram final : public Program
 {
 public:
     AddProgram();
@@ -79,7 +75,7 @@ public:
  * Programa que solicita un número entero y muestra una cuenta atras desde
  * ese número hasta cero.
  */
-class CountdownProgram : public Program
+class CountdownProgram final : public Program
 {
 public:
     CountdownProgram();
@@ -88,7 +84,7 @@ public:
 /**
  * Programa que solicita un número entero y muestra su factorial.
  */
-class FactorialProgram : public Program
+class FactorialProgram final : public Program
 {
 public:
     FactorialProgram();

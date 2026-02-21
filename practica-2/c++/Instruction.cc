@@ -30,11 +30,6 @@ InstructionWithImmediate::InstructionWithImmediate(std::string instName, int imm
 
 int Add::execute(std::stack<int> &stack) const
 {
-    if (stack.size() < 2)
-    {
-        throw std::runtime_error("Not enough values on the stack for 'add' instruction.");
-    }
-
     int a = stack.top();
     stack.pop();
     int b = stack.top();
@@ -54,11 +49,6 @@ int Read::execute(std::stack<int> &stack) const
 
 int Write::execute(std::stack<int> &stack) const
 {
-    if (stack.empty())
-    {
-        throw std::runtime_error("No values on the stack to write.");
-    }
-
     int value = stack.top();
     stack.pop();
     std::cout << value << std::endl;
@@ -73,22 +63,12 @@ int Push::execute(std::stack<int> &stack) const
 
 int Dup::execute(std::stack<int> &stack) const
 {
-    if (stack.empty())
-    {
-        throw std::runtime_error("No values on the stack to duplicate.");
-    }
-
     stack.push(stack.top());
     return -1;
 }
 
 int JumpIf::execute(std::stack<int> &stack) const
 {
-    if (stack.empty())
-    {
-        throw std::runtime_error("No values on the stack for 'jumpif' instruction.");
-    }
-
     int value = stack.top();
     stack.pop();
     return value >= 0 ? immediateValue : -1;
@@ -96,11 +76,6 @@ int JumpIf::execute(std::stack<int> &stack) const
 
 int Mul::execute(std::stack<int> &stack) const
 {
-    if (stack.size() < 2)
-    {
-        throw std::runtime_error("Not enough values on the stack for 'mul' instruction.");
-    }
-
     int a = stack.top();
     stack.pop();
     int b = stack.top();
@@ -111,11 +86,6 @@ int Mul::execute(std::stack<int> &stack) const
 
 int Swap::execute(std::stack<int> &stack) const
 {
-    if (stack.size() < 2)
-    {
-        throw std::runtime_error("Not enough values on the stack to swap.");
-    }
-
     int a = stack.top();
     stack.pop();
     int b = stack.top();
@@ -127,11 +97,6 @@ int Swap::execute(std::stack<int> &stack) const
 
 int Over::execute(std::stack<int> &stack) const
 {
-    if (stack.size() < 2)
-    {
-        throw std::runtime_error("Not enough values on the stack for 'over' instruction.");
-    }
-
     int a = stack.top();
     stack.pop();
     int b = stack.top();
