@@ -45,7 +45,7 @@ void Program::run()
 std::ostream &operator<<(std::ostream &os, const Program &program)
 {
     for (unsigned i = 0; i < program.instructionCount; i++)
-        os << std::setw(3) << i + 1 << "   "
+        os << std::setw(3) << i << "   "
            << program.instructionSet[i]->toString()
            << std::endl;
     return os;

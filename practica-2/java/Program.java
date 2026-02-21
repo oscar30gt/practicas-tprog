@@ -58,7 +58,7 @@ class Program {
     public String toString() {
         String text = "";
         for (int i = 0; i < instructionSet.length; i++) {
-            text += String.format("%3d   %s\n", i + 1, instructionSet[i].toString());
+            text += String.format("%3d   %s\n", i , instructionSet[i].toString());
         }
         return text;
     }
