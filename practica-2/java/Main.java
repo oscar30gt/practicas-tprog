@@ -13,9 +13,9 @@
  */
 public class Main {
     public static void main(String[] args) {
-        AddProgram addProgram = new AddProgram();
-        CountdownProgram countdownProgram = new CountdownProgram();
-        FactorialProgram factorialProgram = new FactorialProgram();
+        Program addProgram = new AddProgram();
+        Program countdownProgram = new CountdownProgram();
+        Program factorialProgram = new FactorialProgram();
 
         // AddProgram
         System.out.println("\033[33mEjecutando AddProgram:\033[0m");
