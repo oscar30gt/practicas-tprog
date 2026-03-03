@@ -18,30 +18,41 @@ void Elemento::imprimir(ostream &os, int indent) const
        << endl;
 }
 
+Elemento::Elemento(const string &nombre, double volumen)
+    : _nombre(nombre), _volumen(volumen) {}
+
+std::string Elemento::nombre() const { return _nombre; }
+double Elemento::volumen() const { return _volumen; }
+
+//======================== Carga ========================
+
+Carga::Carga(const string &nombre, double volumen, double peso)
+    : Elemento(nombre, volumen), _peso(peso) {}
+
+double Carga::peso() const { return _peso; }
+
 //======================== Almacen ========================
 
-Almacen::Almacen(double capacidad) : _capacidad(capacidad) {}
+Almacen::Almacen(const string &nombre, double capacidad)
+    : Elemento(nombre, capacidad){}
+
 Almacen::~Almacen()
 {
     for (Carga *carga : _contenido)
         delete carga;
 }
 
-bool Almacen::guardar(Carga *elemento)
+bool Almacen::guardar(Carga *carga)
 {
-    if (volumen() + elemento->volumen() > _capacidad)
+    double uso = 0;
+    for (const Carga *c : _contenido)
+        uso += c->volumen();
+
+    if (uso + carga->volumen() > volumen())
         return false; // No hay suficiente espacio
 
-    _contenido.push_back(elemento);
+    _contenido.push_back(carga);
     return true;
-}
-
-double Almacen::volumen() const
-{
-    double total = 0;
-    for (const Carga *carga : _contenido)
-        total += carga->volumen();
-    return total;
 }
 
 double Almacen::peso() const
@@ -65,12 +76,14 @@ void Almacen::imprimir(ostream &os, int indent) const
 //======================== Producto ========================
 
 Producto::Producto(const string &nombre, double volumen, double peso)
-    : _nombre(nombre), _volumen(volumen), _peso(peso) {}
+    : Carga(nombre, volumen, peso) {}
 
 //======================== Contenedor ========================
 
-Contenedor::Contenedor(double capacidad) : Almacen(capacidad) {}
+Contenedor::Contenedor(double capacidad)
+    : Carga("Contenedor", capacidad, 0), Almacen("Contenedor", capacidad) {}
 
 //======================== Camion ========================
 
-Camion::Camion(double capacidad) : Almacen(capacidad) {}
+Camion::Camion(double capacidad)
+    : Almacen("Camion", capacidad) {}

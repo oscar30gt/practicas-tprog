@@ -66,17 +66,17 @@ int main(int argc, char** argv)
 	Camion lleno con Trenzas de Almudevar
 
 	Camion [20.0 m3] [1115.9 kg]
-	Contenedor de Carga Estandar [4.0 m3] [5.8 kg]
+	  Contenedor de Carga Estandar [4.0 m3] [5.8 kg]
 		Longaniza de Graus [0.5 m3] [0.8 kg]
 		Adoquines de Zaragoza [0.1 m3] [5.0 kg]
-	Contenedor de Productos Toxicos [3.0 m3] [10.0 kg]
+	  Contenedor de Productos Toxicos [3.0 m3] [10.0 kg]
 		Discos de Melendi [1.0 m3] [10.0 kg]
-	Contenedor de Carga Estandar [10.0 m3] [1100.0 kg]
+	  Contenedor de Carga Estandar [10.0 m3] [1100.0 kg]
 		Contenedor de Seres Vivos [1.0 m3] [100.0 kg]
 			Elvis Presley [0.1 m3] [100.0 kg]
 		Contenedor de Seres Vivos [8.0 m3] [1000.0 kg]
 			Frogosaurio [5.0 m3] [1000.0 kg]
-	Apuntes de TePro [0.5 m3] [0.1 kg]
+	  Apuntes de TePro [0.5 m3] [0.1 kg]
 	*/
 
 	return 0;
