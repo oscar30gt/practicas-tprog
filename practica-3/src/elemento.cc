@@ -1,6 +1,15 @@
-#include "elemento.h"
-#include <iostream>
+/**
+ * @file elemento.cc
+ *
+ * @authors
+ * Hugo García Sánchez (930108)
+ * Óscar Grimal Torres (926897)
+ */
 
+#include <iostream>
+#include "elemento.h"
+
+/** Espacios entre niveles de indentación al imprimir */
 #define TAB_SIZE 2
 
 ostream &operator<<(ostream &os, const Elemento &e)
@@ -11,6 +20,7 @@ ostream &operator<<(ostream &os, const Elemento &e)
 
 void Elemento::imprimir(ostream &os, int indent) const
 {
+    // Formato: "Nombre [Volumen m3] [Peso kg]"
     os << string(indent * TAB_SIZE, ' ') << nombre()
        << " [" << volumen() << " m3] [" << peso() << " kg]"
        << endl;

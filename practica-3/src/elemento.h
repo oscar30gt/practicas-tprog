@@ -1,3 +1,11 @@
+/**
+ * @file elemento.h
+ *
+ * @authors
+ * Hugo García Sánchez (930108)
+ * Óscar Grimal Torres (926897)
+ */
+
 #pragma once
 
 #include <iostream>
@@ -10,15 +18,21 @@ using namespace std;
  */
 class Elemento
 {
-    const string _nombre; // Nombre del elemento
+    /** Nombre amigable del elemento */
+    const string _nombre;
 
 protected:
-    const double _volumen; // Volumen del elemento (en m3)
+    /** Volumen que ocupa el elemento (en m3) */
+    const double _volumen;
 
 public:
     // Auxiliar para imprimir con los niveles de indentación dados
     virtual void imprimir(ostream &os, int indent = 0) const;
 
+    /**
+     * @param nombre Nombre del elemento.
+     * @param volumen Volumen que ocupa el elemento (en m3).
+     */
     Elemento(const string &nombre, double volumen);
     virtual ~Elemento() = default;
 

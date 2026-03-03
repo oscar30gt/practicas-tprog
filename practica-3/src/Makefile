@@ -1,28 +1,16 @@
-PROG:=main
-SRCS:=main.cc
+# ------------------------------------
+# Makefile para compilar la práctica 3
+# -------------------------------------
 
-CXX:=g++ -Wall
-
-OBJS:=$(SRCS:.cc=.o)
-DEPS:=$(SRCS:.cc=.d)
+PROG := practica3
+SRCS :=  main.cc cargas.cc elemento.cc
+CXX := g++
+CXXFLAGS := -O2 -Wall -std=c++20
 
 all: $(PROG)
 
-$(PROG): $(OBJS)
-	$(CXX) -o $@ $^
-
-.cc.o:
-	$(CXX) -c -MMD $<
-
-.PHONY: edit go
-
-go: $(PROG)
-	$(PROG)
-
-edit:
-	@geany -s -i $(SRCS) *.h &
+$(PROG): $(SRCS)
+	$(CXX) $(CXXFLAGS) $(SRCS) -o $(PROG)
 
 clean:
-	@rm -f $(PROG) $(OBJS) $(DEPS) *.gch core tags
-
--include $(DEPS)
+	rm -f $(PROG)

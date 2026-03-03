@@ -1,3 +1,11 @@
+/**
+ * @file cargas.h
+ *
+ * @authors
+ * Hugo García Sánchez (930108)
+ * Óscar Grimal Torres (926897)
+ */
+
 #pragma once
 
 #include "elemento.h"
@@ -7,11 +15,17 @@
  */
 class Carga : public virtual Elemento
 {
-    const double _peso;     // Peso de la carga
+    /** Peso propio de la carga (en kg) */
+    const double _peso;
 
 public:
+    /**
+     * @param nombre Nombre de la carga 
+     * @param volumen Volumen de la carga (en m3)
+     * @param peso Peso de la carga (en kg)
+     */
     Carga(const string &nombre, double volumen, double peso);
-    virtual ~Carga() = default;
+    virtual ~Carga() override = 0;
 
     virtual double peso() const override;
 };
@@ -19,7 +33,7 @@ public:
 //==================================================================
 
 /**
- * Una carga simple que no contiene otras cargas. Tiene un peso y un volumen fijos.
+ * Una carga generica que se puede transportar.
  */
 class Producto final : public Carga
 {
@@ -33,6 +47,9 @@ public:
     ~Producto() override = default;
 };
 
+/**
+ * Carga especial `SerVivo`.
+ */
 class SerVivo final : public Carga
 {
 public:
@@ -45,6 +62,9 @@ public:
     ~SerVivo() override = default;
 };
 
+/**
+ * Carga especial `Toxico`.
+ */
 class Toxico final : public Carga
 {
 public:
