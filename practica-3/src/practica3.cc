@@ -33,19 +33,22 @@ double Carga::peso() const { return _peso; }
 
 //======================== Almacen ========================
 
-Almacen::Almacen(const string &nombre, double capacidad)
-    : Elemento(nombre, capacidad){}
+template <typename T>
+Almacen<T>::Almacen(const string &nombre, double capacidad)
+    : Elemento(nombre, capacidad) {}
 
-Almacen::~Almacen()
+template <typename T>
+Almacen<T>::~Almacen()
 {
     for (Carga *carga : _contenido)
         delete carga;
 }
 
-bool Almacen::guardar(Carga *carga)
+template <typename T>
+bool Almacen<T>::guardar(T *carga)
 {
     double uso = 0;
-    for (const Carga *c : _contenido)
+    for (const T *c : _contenido)
         uso += c->volumen();
 
     if (uso + carga->volumen() > volumen())
@@ -55,35 +58,44 @@ bool Almacen::guardar(Carga *carga)
     return true;
 }
 
-double Almacen::peso() const
+template <typename T>
+double Almacen<T>::peso() const
 {
     double total = 0;
-    for (const Carga *carga : _contenido)
+    for (const T *carga : _contenido)
         total += carga->peso();
     return total;
 }
 
-void Almacen::imprimir(ostream &os, int indent) const
+template <typename T>
+void Almacen<T>::imprimir(ostream &os, int indent) const
 {
     // Encabezado generico. Igual que el de un producto.
     Elemento::imprimir(os, indent);
 
     // Imprimimos cada carga dentro del almacen, con indentación adicional
-    for (const Carga *carga : _contenido)
+    for (const T *carga : _contenido)
         carga->imprimir(os, indent + 1); // Indentamos las cargas dentro del almacen
 }
 
-//======================== Producto ========================
+//======================== Producto/Ser Vivo/Toxico ========================
 
 Producto::Producto(const string &nombre, double volumen, double peso)
-    : Carga(nombre, volumen, peso) {}
+    : Elemento(nombre, volumen), Carga(nombre, volumen, peso) {}
+
+SerVivo::SerVivo(const string &nombre, double volumen, double peso)
+    : Elemento(nombre, volumen), Carga(nombre, volumen, peso) {}
+
+Toxico::Toxico(const string &nombre, double volumen, double peso)
+    : Elemento(nombre, volumen), Carga(nombre, volumen, peso) {}
 
 //======================== Contenedor ========================
 
-Contenedor::Contenedor(double capacidad)
-    : Carga("Contenedor", capacidad, 0), Almacen("Contenedor", capacidad) {}
+template <typename T>
+Contenedor<T>::Contenedor(double capacidad)
+    : Carga("Contenedor", capacidad, 0), Almacen<T>("Contenedor", capacidad) {}
 
 //======================== Camion ========================
 
 Camion::Camion(double capacidad)
-    : Almacen("Camion", capacidad) {}
+    : Elemento("Camion", capacidad), Almacen<Carga>("Camion", capacidad) {}

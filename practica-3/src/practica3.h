@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <concepts>
 
 using namespace std;
 
@@ -47,7 +48,7 @@ public:
 class Carga : public virtual Elemento
 {
     const double _peso;   // Peso de la carga
-    friend class Almacen; // Almacen necesita acceso a imprimir() para mostrar su contenido
+    friend class Almacen<>; // Almacen necesita acceso a imprimir() para mostrar su contenido
 
 public:
     Carga(const string &nombre, double volumen, double peso);
@@ -59,11 +60,13 @@ public:
 /**
  * Interfaz para elementos que pueden contener otras cargas
  */
+template <typename T = Carga>
+requires derived_from<T, Carga>
 class Almacen : public virtual Elemento
 {
 protected:
     /** Cargas almacenadas dentro de este almacen */
-    vector<Carga *> _contenido;
+    vector<T *> _contenido;
 
     void imprimir(ostream &os, int indent) const override final;
 
@@ -76,6 +79,7 @@ public:
 
     /**
      * Guarda una carga dentro del almacen, siempre que no exceda su capacidad.
+     * @tparam T Tipo de carga a guardar, debe ser una clase derivada de Carga
      * @param carga Carga a guardar
      * @returns `true` si se ha guardado correctamente, `false` si no hay suficiente espacio.
      *
@@ -83,7 +87,7 @@ public:
      * Si el almacen no tiene suficiente espacio, la carga no se guarda y el llamante
      * sigue siendo responsable de su memoria.
      */
-    bool guardar(Carga *carga);
+    bool guardar(T *carga);
     virtual double peso() const override;
 };
 
@@ -133,7 +137,9 @@ public:
 /**
  * Un contenedor puede contener otras cargas al mismo tiempo que actua como una.
  */
-class Contenedor final : public Carga, public Almacen
+template <typename T = Carga>
+requires derived_from<T, Carga>
+class Contenedor final : public Carga, public Almacen<T>
 {
 public:
     /**
@@ -143,13 +149,13 @@ public:
     ~Contenedor() override = default;
 
     // Resolvemos la ambiguedad de herencia multiple
-    virtual double peso() const override { return Almacen::peso(); }
+    virtual double peso() const override { return Almacen<T>::peso(); }
 };
 
 /**
  * Un camion es un Almacen que puede guardar Cargas, pero no es una Carga que se pueda transportar dentro de otro Almacen.
  */
-class Camion final : public Almacen
+class Camion final : public Almacen<> // <- Un camion puede llevar lo que sea
 {
 public:
     /**
