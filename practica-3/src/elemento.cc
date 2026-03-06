@@ -9,6 +9,7 @@
 #include <iostream>
 #include <iomanip>
 #include <string>
+#include <iomanip>
 
 #include "elemento.h"
 
@@ -24,7 +25,8 @@ std::ostream &operator<<(std::ostream &os, const Elemento &e)
 void Elemento::imprimir(std::ostream &os, int indent) const
 {
     // Formato: "Nombre [Volumen m3] [Peso kg]"
-    os << std::string(indent * TAB_SIZE, ' ') << nombre()
+    os << std::fixed << std::setprecision(1)
+       << std::string(indent * TAB_SIZE, ' ') << nombre()
        << " [" << volumen() << " m3] [" << peso() << " kg]"
        << std::endl;
 }
