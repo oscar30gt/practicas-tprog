@@ -16,29 +16,27 @@
 #include "elemento.h"
 #include "cargas.h"
 
-using namespace std;
-
 /**
  * Interfaz para elementos que pueden contener otras cargas
  * @tparam T Tipo de carga que puede contener el almacen, debe ser una clase derivada de `Carga`
  */
-template <typename T = Transportable>
-requires derived_from<T, Transportable>
+template <typename T>
+requires std::derived_from<T, Transportable>
 class Almacen : public virtual Elemento
 {
 protected:
     /** Cargas almacenadas dentro de este almacen */
-    vector<T *> _contenido;
+    std::vector<T *> _contenido;
 
     // Sobreescibimos imprimir para mostrar tambien el contenido del almacen
-    void imprimir(ostream &os, int indent) const override final;
+    void imprimir(std::ostream &os, int indent) const override final;
 
 public:
     /**
      * @param nombre Nombre del almacen
      * @param capacidad Capacidad máxima del almacen (en m3)
      */
-    Almacen(const string &nombre, double capacidad);
+    Almacen(const std::string &nombre, double capacidad);
     virtual ~Almacen() override = 0;
 
     /**
@@ -55,13 +53,11 @@ public:
     virtual double peso() const override;
 };
 
-//==================================================================
-
 /**
  * Un contenedor puede contener otras cargas al mismo tiempo que actua como una.
  */
-template <typename T = Transportable>
-requires derived_from<T, Transportable>
+template <typename T>
+requires std::derived_from<T, Transportable>
 class Contenedor final : public Carga, public Almacen<T>
 {
 public:
@@ -95,26 +91,26 @@ public:
 
 // Helper para obtener el nombre del contenedor segun el tipo de carga que almacena
 template <typename T>
-requires derived_from<T, Transportable>
+requires std::derived_from<T, Transportable>
 constexpr const char *nombreContenedor()
 {
-    if constexpr (is_same_v<T, SerVivo>)
+    if constexpr (std::same_as<T, SerVivo>)
         return "Contenedor de seres vivos";
-    else if constexpr (is_same_v<T, Toxico>)
+    else if constexpr (std::same_as<T, Toxico>)
         return "Contenedor de productos toxicos";
-    else if constexpr (is_same_v<T, Producto>)
+    else if constexpr (std::same_as<T, Producto>)
         return "Contenedor de productos basicos";
     else
         return "Contenedor de carga estandar";
 }
 
 template <typename T>
-requires derived_from<T, Transportable>
-Almacen<T>::Almacen(const string &nombre, double capacidad)
+requires std::derived_from<T, Transportable>
+Almacen<T>::Almacen(const std::string &nombre, double capacidad)
     : Elemento(nombre, capacidad) {}
 
 template <typename T>
-requires derived_from<T, Transportable>
+requires std::derived_from<T, Transportable>
 Almacen<T>::~Almacen()
 {
     for (Transportable *carga : _contenido)
@@ -122,7 +118,7 @@ Almacen<T>::~Almacen()
 }
 
 template <typename T>
-requires derived_from<T, Transportable>
+requires std::derived_from<T, Transportable>
 bool Almacen<T>::guardar(T *carga)
 {
     // Uso actual del almacen.
@@ -138,7 +134,7 @@ bool Almacen<T>::guardar(T *carga)
 }
 
 template <typename T>
-requires derived_from<T, Transportable>
+requires std::derived_from<T, Transportable>
 double Almacen<T>::peso() const
 {
     // El peso de un almacen es la suma del peso de las cargas que contiene
@@ -149,8 +145,8 @@ double Almacen<T>::peso() const
 }
 
 template <typename T>
-requires derived_from<T, Transportable>
-void Almacen<T>::imprimir(ostream &os, int indent) const
+requires std::derived_from<T, Transportable>
+void Almacen<T>::imprimir(std::ostream &os, int indent) const
 {
     // Encabezado generico. Igual que el de una carga cualquiera.
     Elemento::imprimir(os, indent);
@@ -161,7 +157,7 @@ void Almacen<T>::imprimir(ostream &os, int indent) const
 }
 
 template <typename T>
-requires derived_from<T, Transportable>
+requires std::derived_from<T, Transportable>
 Contenedor<T>::Contenedor(double capacidad)
     : Elemento(nombreContenedor<T>(), capacidad),
       Carga(nombreContenedor<T>(), capacidad, 0),

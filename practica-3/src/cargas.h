@@ -24,7 +24,7 @@ public:
      * @param volumen Volumen de la carga (en m3)
      * @param peso Peso de la carga (en kg)
      */
-    Transportable(const string &nombre, double volumen, double peso);
+    Transportable(const std::string &nombre, double volumen, double peso);
     virtual ~Transportable() override = 0;
 
     virtual double peso() const override;
@@ -35,7 +35,7 @@ public:
 class Carga : public Transportable
 {
 public:
-    Carga(const string &nombre, double volumen, double peso);
+    Carga(const std::string &nombre, double volumen, double peso);
 };
 
 /**
@@ -49,7 +49,7 @@ public:
      * @param volumen Volumen del producto (en m3)
      * @param peso Peso del producto (en kg)
      */
-    Producto(const string &nombre, double volumen, double peso);
+    Producto(const std::string &nombre, double volumen, double peso);
     ~Producto() override = default;
 };
 
@@ -64,7 +64,7 @@ public:
      * @param volumen Volumen del ser vivo (en m3)
      * @param peso Peso del ser vivo (en kg)
      */
-    SerVivo(const string &nombre, double volumen, double peso);
+    SerVivo(const std::string &nombre, double volumen, double peso);
     ~SerVivo() override = default;
 };
 
@@ -79,6 +79,6 @@ public:
      * @param volumen Volumen del tóxico (en m3)
      * @param peso Peso del tóxico (en kg)
      */
-    Toxico(const string &nombre, double volumen, double peso);
+    Toxico(const std::string &nombre, double volumen, double peso);
     ~Toxico() override = default;
 };

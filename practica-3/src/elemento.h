@@ -11,15 +11,13 @@
 #include <iostream>
 #include <string>
 
-using namespace std;
-
 /**
  * Clase base abstracta para todo lo que tiene nombre, volumen y peso.
  */
 class Elemento
 {
     /** Nombre amigable del elemento */
-    const string _nombre;
+    const std::string _nombre;
 
 protected:
     /** Volumen que ocupa el elemento (en m3) */
@@ -27,21 +25,21 @@ protected:
 
 public:
     // Auxiliar para imprimir con los niveles de indentación dados
-    virtual void imprimir(ostream &os, int indent = 0) const;
+    virtual void imprimir(std::ostream &os, int indent = 0) const;
 
     /**
      * @param nombre Nombre del elemento.
      * @param volumen Volumen que ocupa el elemento (en m3).
      */
-    Elemento(const string &nombre, double volumen);
+    Elemento(const std::string &nombre, double volumen);
     virtual ~Elemento() = default;
 
     // Sobrecarga del operador de inserción
-    friend ostream &operator<<(ostream &os, const Elemento &e);
+    friend std::ostream &operator<<(std::ostream &os, const Elemento &e);
 
     // GETTERS
     /** Obtiene el nombre del elemento */
-    string nombre() const;
+    std::string nombre() const;
 
     /** Obtiene el volumen del elemento */
     double volumen() const;
