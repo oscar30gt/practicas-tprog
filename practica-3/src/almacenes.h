@@ -22,8 +22,8 @@ using namespace std;
  * Interfaz para elementos que pueden contener otras cargas
  * @tparam T Tipo de carga que puede contener el almacen, debe ser una clase derivada de `Carga`
  */
-template <typename T = Carga>
-requires derived_from<T, Carga>
+template <typename T = Transportable>
+requires derived_from<T, Transportable>
 class Almacen : public virtual Elemento
 {
 protected:
@@ -60,8 +60,8 @@ public:
 /**
  * Un contenedor puede contener otras cargas al mismo tiempo que actua como una.
  */
-template <typename T = Carga>
-requires derived_from<T, Carga>
+template <typename T = Transportable>
+requires derived_from<T, Transportable>
 class Contenedor final : public Carga, public Almacen<T>
 {
 public:
@@ -81,7 +81,7 @@ public:
  * Un camion es un Almacen que puede guardar Cargas, 
  * pero no es una Carga que se pueda transportar dentro de otro Almacen.
  */
-class Camion final : public Almacen<> // <- Un camion puede llevar lo que sea
+class Camion final : public Almacen<Carga> // <- Un camion es un almacen de cargas
 {
 public:
     /**
@@ -95,7 +95,7 @@ public:
 
 // Helper para obtener el nombre del contenedor segun el tipo de carga que almacena
 template <typename T>
-requires derived_from<T, Carga>
+requires derived_from<T, Transportable>
 constexpr const char *nombreContenedor()
 {
     if constexpr (is_same_v<T, SerVivo>)
@@ -109,20 +109,20 @@ constexpr const char *nombreContenedor()
 }
 
 template <typename T>
-requires derived_from<T, Carga>
+requires derived_from<T, Transportable>
 Almacen<T>::Almacen(const string &nombre, double capacidad)
     : Elemento(nombre, capacidad) {}
 
 template <typename T>
-requires derived_from<T, Carga>
+requires derived_from<T, Transportable>
 Almacen<T>::~Almacen()
 {
-    for (Carga *carga : _contenido)
+    for (Transportable *carga : _contenido)
         delete carga;
 }
 
 template <typename T>
-requires derived_from<T, Carga>
+requires derived_from<T, Transportable>
 bool Almacen<T>::guardar(T *carga)
 {
     // Uso actual del almacen.
@@ -138,7 +138,7 @@ bool Almacen<T>::guardar(T *carga)
 }
 
 template <typename T>
-requires derived_from<T, Carga>
+requires derived_from<T, Transportable>
 double Almacen<T>::peso() const
 {
     // El peso de un almacen es la suma del peso de las cargas que contiene
@@ -149,7 +149,7 @@ double Almacen<T>::peso() const
 }
 
 template <typename T>
-requires derived_from<T, Carga>
+requires derived_from<T, Transportable>
 void Almacen<T>::imprimir(ostream &os, int indent) const
 {
     // Encabezado generico. Igual que el de una carga cualquiera.
@@ -161,7 +161,7 @@ void Almacen<T>::imprimir(ostream &os, int indent) const
 }
 
 template <typename T>
-requires derived_from<T, Carga>
+requires derived_from<T, Transportable>
 Contenedor<T>::Contenedor(double capacidad)
     : Elemento(nombreContenedor<T>(), capacidad),
       Carga(nombreContenedor<T>(), capacidad, 0),
@@ -169,4 +169,4 @@ Contenedor<T>::Contenedor(double capacidad)
 
 Camion::Camion(double capacidad)
     : Elemento("Camion", capacidad),
-      Almacen<>("Camion", capacidad) {}
+      Almacen<Carga>("Camion", capacidad) {}

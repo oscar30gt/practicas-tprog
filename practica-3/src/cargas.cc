@@ -9,18 +9,21 @@
 #include "cargas.h"
 #include "elemento.h"
 
-Carga::Carga(const string &nombre, double volumen, double peso)
+Transportable::Transportable(const string &nombre, double volumen, double peso)
     : Elemento(nombre, volumen), _peso(peso) {}
 
-Carga::~Carga() = default;
+Transportable::~Transportable() = default;
 
-double Carga::peso() const { return _peso; }
+double Transportable::peso() const { return _peso; }
+
+Carga::Carga(const string &nombre, double volumen, double peso)
+    : Elemento(nombre, volumen), Transportable(nombre, volumen, peso) {}
 
 Producto::Producto(const string &nombre, double volumen, double peso)
     : Elemento(nombre, volumen), Carga(nombre, volumen, peso) {}
 
 SerVivo::SerVivo(const string &nombre, double volumen, double peso)
-    : Elemento(nombre, volumen), Carga(nombre, volumen, peso) {}
+    : Elemento(nombre, volumen), Transportable(nombre, volumen, peso) {}
 
 Toxico::Toxico(const string &nombre, double volumen, double peso)
-    : Elemento(nombre, volumen), Carga(nombre, volumen, peso) {}
+    : Elemento(nombre, volumen), Transportable(nombre, volumen, peso) {}

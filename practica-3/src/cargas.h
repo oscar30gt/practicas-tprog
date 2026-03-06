@@ -13,24 +13,30 @@
 /**
  * Interfaz para elementos que pueden ser transportados
  */
-class Carga : public virtual Elemento
+class Transportable : public virtual Elemento
 {
     /** Peso propio de la carga (en kg) */
     const double _peso;
 
 public:
     /**
-     * @param nombre Nombre de la carga 
+     * @param nombre Nombre de la carga
      * @param volumen Volumen de la carga (en m3)
      * @param peso Peso de la carga (en kg)
      */
-    Carga(const string &nombre, double volumen, double peso);
-    virtual ~Carga() override = 0;
+    Transportable(const string &nombre, double volumen, double peso);
+    virtual ~Transportable() override = 0;
 
     virtual double peso() const override;
 };
 
 //==================================================================
+
+class Carga : public Transportable
+{
+public:
+    Carga(const string &nombre, double volumen, double peso);
+};
 
 /**
  * Una carga generica que se puede transportar.
@@ -50,7 +56,7 @@ public:
 /**
  * Carga especial `SerVivo`.
  */
-class SerVivo final : public Carga
+class SerVivo final : public Transportable
 {
 public:
     /**
@@ -65,7 +71,7 @@ public:
 /**
  * Carga especial `Toxico`.
  */
-class Toxico final : public Carga
+class Toxico final : public Transportable
 {
 public:
     /**
