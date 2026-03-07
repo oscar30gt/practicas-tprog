@@ -98,13 +98,15 @@ requires std::derived_from<T, Transportable>
 constexpr const char *nombreContenedor()
 {
     if constexpr (std::same_as<T, SerVivo>)
-        return "Contenedor de seres vivos";
+        return "Contenedor de Seres Vivos";
     else if constexpr (std::same_as<T, Toxico>)
-        return "Contenedor de productos toxicos";
+        return "Contenedor de Productos Toxicos";
     else if constexpr (std::same_as<T, Producto>)
-        return "Contenedor de productos basicos";
+        return "Contenedor de Productos Basicos";
+    else if constexpr (std::same_as<T, Carga>)
+        return "Contenedor de Carga Estandar";
     else
-        return "Contenedor de carga estandar";
+        return "Contenedor";
 }
 
 template <typename T>
