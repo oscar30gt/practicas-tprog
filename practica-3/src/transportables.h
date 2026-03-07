@@ -1,5 +1,5 @@
 /**
- * @file cargas.h
+ * @file transportables.h
  *
  * @authors
  * Hugo García Sánchez (930108)
@@ -9,20 +9,26 @@
 #pragma once
 
 #include "elemento.h"
+#include <concepts>
 
 /**
  * Interfaz para elementos que pueden ser transportados
  */
 class Transportable : public virtual Elemento
 {
-    /** Peso propio de la carga (en kg) */
+    /** Peso propio del transportable (en kg) */
     const double _peso;
+
+    // Necesitamos que `Almacen` pueda acceder a `imprimir()` para poder imprimir su contenido
+    template <typename T>
+    requires std::derived_from<T, Transportable>
+    friend class Almacen;
 
 public:
     /**
-     * @param nombre Nombre de la carga
-     * @param volumen Volumen de la carga (en m3)
-     * @param peso Peso de la carga (en kg)
+     * @param nombre Nombre del transportable
+     * @param volumen Volumen del transportable (en m3)
+     * @param peso Peso del transportable (en kg)
      */
     Transportable(const std::string &nombre, double volumen, double peso);
     virtual ~Transportable() override = 0;
@@ -32,6 +38,7 @@ public:
 
 //==================================================================
 
+// Clase carga, que mas que como carga generica podemos entenderla como "carga no especial"
 class Carga : public Transportable
 {
 public:

@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <iostream>
+#include <ostream>
 #include <string>
 
 /**
@@ -23,10 +23,10 @@ protected:
     /** Volumen que ocupa el elemento (en m3) */
     const double _volumen;
 
-public:
     // Auxiliar para imprimir con los niveles de indentación dados
     virtual void imprimir(std::ostream &os, int indent = 0) const;
 
+public:
     /**
      * @param nombre Nombre del elemento.
      * @param volumen Volumen que ocupa el elemento (en m3).

@@ -6,9 +6,7 @@
  * Óscar Grimal Torres (926897)
  */
 
-#include <iostream>
-#include <iomanip>
-#include <string>
+#include <ostream>
 #include <iomanip>
 
 #include "elemento.h"

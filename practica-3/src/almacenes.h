@@ -14,20 +14,22 @@
 #include <concepts>
 
 #include "elemento.h"
-#include "cargas.h"
+#include "transportables.h"
 
 /**
  * Interfaz para elementos que pueden contener otras cargas
- * @tparam T Tipo de carga que puede contener el almacen, debe ser una clase derivada de `Carga`
+ * @tparam T Tipo de carga que puede contener el almacen, debe ser una clase derivada de `Transportable`
  */
 template <typename T>
 requires std::derived_from<T, Transportable>
 class Almacen : public virtual Elemento
-{
-protected:
+{    
     /** Cargas almacenadas dentro de este almacen */
     std::vector<T *> _contenido;
 
+    /** Uso actual del almacen (en m3) */
+    double _volumenOcupado;
+    
     // Sobreescibimos imprimir para mostrar tambien el contenido del almacen
     void imprimir(std::ostream &os, int indent) const override final;
 
@@ -41,7 +43,7 @@ public:
 
     /**
      * Guarda una carga dentro del almacen, siempre que no exceda su capacidad.
-     * @tparam T Tipo de carga a guardar, debe ser una clase derivada de Carga
+     * @tparam T Tipo de carga a guardar, debe ser una clase derivada de `Transportable`
      * @param carga Carga a guardar
      * @returns `true` si se ha guardado correctamente, `false` si no hay suficiente espacio.
      *
@@ -54,7 +56,8 @@ public:
 };
 
 /**
- * Un contenedor puede contener otras cargas al mismo tiempo que actua como una.
+ * Un contenedor puede contener transportables de un tipo específico al 
+ * mismo tiempo que actua como una carga estandar que puede ser transportada.
  */
 template <typename T>
 requires std::derived_from<T, Transportable>
@@ -74,10 +77,10 @@ public:
 };
 
 /**
- * Un camion es un Almacen que puede guardar Cargas, 
- * pero no es una Carga que se pueda transportar dentro de otro Almacen.
+ * Un camion es un Almacen que puede guardar cargas estandar,
+ * pero no es una carga en si mismo.
  */
-class Camion final : public Almacen<Carga> // <- Un camion es un almacen de cargas
+class Camion final : public Almacen<Carga> // <- Un camion es un almacen de cargas estandar.
 {
 public:
     /**
@@ -89,7 +92,7 @@ public:
 
 //========================= IMPLEMENTACION =========================
 
-// Helper para obtener el nombre del contenedor segun el tipo de carga que almacena
+// Helper para obtener el nombre de un contenedor segun el tipo de carga que almacena
 template <typename T>
 requires std::derived_from<T, Transportable>
 constexpr const char *nombreContenedor()
@@ -121,15 +124,11 @@ template <typename T>
 requires std::derived_from<T, Transportable>
 bool Almacen<T>::guardar(T *carga)
 {
-    // Uso actual del almacen.
-    double uso = 0;
-    for (const T *c : _contenido)
-        uso += c->volumen();
-
-    if (uso + carga->volumen() > volumen())
+    if (_volumenOcupado + carga->volumen() > volumen())
         return false; // No hay suficiente espacio
 
     _contenido.push_back(carga);
+    _volumenOcupado += carga->volumen();
     return true;
 }
 

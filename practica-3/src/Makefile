@@ -2,8 +2,8 @@
 # Makefile para compilar la práctica 3
 # -------------------------------------
 
-PROG := practica3
-SRCS :=  main.cc cargas.cc elemento.cc
+PROG := main
+SRCS :=  main.cc transportables.cc elemento.cc
 CXX := g++
 CXXFLAGS := -O2 -Wall -std=c++20
 
