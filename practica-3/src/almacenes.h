@@ -112,7 +112,7 @@ constexpr const char *nombreContenedor()
 template <typename T>
 requires std::derived_from<T, Transportable>
 Almacen<T>::Almacen(const std::string &nombre, double capacidad)
-    : Elemento(nombre, capacidad) {}
+    : Elemento(nombre, capacidad), _volumenOcupado(0) {}
 
 template <typename T>
 requires std::derived_from<T, Transportable>
