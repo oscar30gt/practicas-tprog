@@ -113,6 +113,12 @@ public:
 
     // El tamaño de un fichero es el suyo propio.
     size_t size() const override;
+
+    /**
+     * Cambia el tamaño del fichero a `newSize` bytes.
+     * @param newSize Nuevo tamaño del fichero en bytes. Debe ser un numero positivo.
+     */
+    void setSize(size_t newSize);
 };
 
 /**

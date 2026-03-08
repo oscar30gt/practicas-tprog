@@ -37,12 +37,22 @@ public:
 
     /**
      * AUXILIAR
-     * Dado un path en forma de vector de strings, obtiene el objeto `Directorio`
-     * correspondiente al dicha ruta.
-     * @param path Ruta al directorio a obtener. Puede ser absoluta o relativa al directorio de trabajo actual.
+     * Dado un path en forma de vector de strings, resuelve la ruta absoluta correspondiente a esa ruta.
+     * @param pathVec Ruta al nodo a obtener. Puede ser absoluta o relativa al directorio de trabajo actual.
+     *                Si no se especifica, se resuelve el directorio de trabajo actual.
+     * @returns Puntero al nodo correspondiente a la ruta dada, o `nullptr` si no existe ningún nodo con esa ruta.
+     */
+    std::vector<std::string> resolvePath(std::vector<std::string> pathVec) const;
+
+    /**
+     * AUXILIAR
+     * Dado un path en forma de vector de strings, devuelve un puntero al directorio correspondiente a esa ruta.
+     * @param pathVec Ruta al directorio a obtener. Puede ser absoluta o relativa al directorio de trabajo actual.
+     *                Si no se especifica, se resuelve el directorio de trabajo actual.
      * @returns Puntero al directorio correspondiente a la ruta dada, o `nullptr` si no existe ningún directorio con esa ruta.
      */
-    Directorio* getDir(std::vector<std::string> path) const;
+    INode* getNode(std::vector<std::string> pathVec) const;
+    Directorio* getNode() const;
 
     Shell();
     ~Shell() = default;

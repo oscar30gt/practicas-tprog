@@ -60,6 +60,11 @@ size_t Fichero::size() const
     return _size;
 }
 
+void Fichero::setSize(size_t newSize)
+{
+    _size = newSize;
+}
+
 // =========================== Enlace ===========================
 
 Enlace::Enlace(const Enlace &other)
