@@ -1,25 +1,16 @@
-PROG:=main
-SRCS:=main.cc
+# ------------------------------------
+# Makefile para compilar la práctica 4
+# -------------------------------------
 
-CXX:=g++ -std=c++20 -Wall -Wfatal-errors
+PROG := main
+SRCS :=  main.cc filesystem.cc shell.cc
+CXX := g++
+CXXFLAGS := -O2 -Wall -std=c++23
 
-OBJS:=$(SRCS:.cc=.o)
-DEPS:=$(SRCS:.cc=.d)
+all: $(PROG)
 
-all: main
-
-main: $(OBJS)
-	$(CXX) -MMD -o $@ $^
-
-%.o: %.cc
-	$(CXX) -MMD -c $<
-
-.PHONY: edit
-
-edit:
-	@geany -s -i $(SRCS) *.h &
+$(PROG): $(SRCS)
+	$(CXX) $(CXXFLAGS) $(SRCS) -o $(PROG) -lstdc++exp
 
 clean:
-	@rm -f $(PROG) *.o *.d core
-
--include $(DEPS)
+	rm -f $(PROG)

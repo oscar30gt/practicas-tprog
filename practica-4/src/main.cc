@@ -82,10 +82,10 @@ int main()
 				println(cerr,"Error sintactico: comando desconocido");
 			}
 		}
-		catch (const arbol_ficheros_error& e)
-		{
-			println(cerr,"{}",e.what());
-		}
+		// catch (const arbol_ficheros_error& e)
+		// {
+		// 	println(cerr,"{}",e.what());
+		// }
 		catch (const out_of_range& e)
 		{
 			println(cerr,"Error sintactico: parametros insuficientes");
@@ -93,7 +93,7 @@ int main()
 		}
 	}
 	println();
-	println("By!!");
+	println("Bye!!");
 
 	return 0;
 }

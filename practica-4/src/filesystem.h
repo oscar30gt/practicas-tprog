@@ -20,11 +20,23 @@ class Enlace;
  */
 class INode
 {
+public:
+    /** Tipos de inodos */
+    enum INodeType
+    {
+        Directory,
+        File
+    };
+
+private:
     /** Numero de enlaces al nodo. */
     unsigned int _nlinks = 0;
 
+    /** Tipo de este nodo. */
+    const INodeType _type;
+
 public:
-    INode();
+    INode(INodeType type): _type(type) {}
     virtual ~INode() = default;
 
     /**
@@ -32,6 +44,9 @@ public:
      * @returns Tamaño del nodo en bytes.
      */
     virtual size_t size() const = 0;
+
+    constexpr bool isDirectory() const { return _type == Directory; };
+    constexpr bool isFile() const { return _type == File; };
 
     friend class Enlace;
 };
@@ -51,6 +66,12 @@ public:
 
     // El tamaño de un directorio es la suma de los tamaños de sus hijos.
     size_t size() const override;
+
+    /**
+     * Obtiene el contenido del directorio.
+     * @return Mapa con los nodos contenidos en el directorio con pares <nombre, nodo>.
+     */
+    std::map<std::string, INode *> getChildren() const;
 
     /**
      * Crea un nuevo elemento en el directorio. El nuevo elemento es un enlace al nodo dado.
@@ -84,6 +105,9 @@ class Fichero final : public INode
     size_t _size;
 
 public:
+    /**
+     * @param size Tamaño del fichero en bytes. Debe ser un numero positivo.
+     */
     Fichero(size_t size);
     virtual ~Fichero() = default;
 
@@ -104,6 +128,11 @@ class Enlace
     INode *_target;
 
 public:
+    /**
+     * @param name Nombre del enlace. Debe ser unico dentro del directorio padre.
+     * @param parent Directorio padre del enlace. No puede ser `nullptr`.
+     * @param target inodo al que apunta el enlace. No puede ser `nullptr`.
+     */
     Enlace(std::string name, Directorio *parent, INode *target);
 
     // Sobreescribimos el constructor de copia y de movimiento para mantener

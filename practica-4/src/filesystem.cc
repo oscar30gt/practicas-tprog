@@ -8,13 +8,9 @@
 
 #include "filesystem.h"
 
-// =========================== INode ===========================
-
-INode::INode() : _nlinks(0) {}
-
 // =========================== Directorio ===========================
 
-Directorio::Directorio() : INode() {}
+Directorio::Directorio() : INode(INodeType::Directory) {}
 
 size_t Directorio::size() const
 {
@@ -22,6 +18,15 @@ size_t Directorio::size() const
     for (const auto &[_, link] : _children)
         total_size += link->size();
     return total_size;
+}
+
+std::map<std::string, INode *> Directorio::getChildren() const
+{
+    // Convertimos enlaces a nodos para facilitar su uso
+    std::map<std::string, INode *> children;
+    for (const auto &[name, link] : _children)
+        children[name] = link.operator->();
+    return children;
 }
 
 bool Directorio::addEntry(std::string name, INode *node)
@@ -49,7 +54,7 @@ INode *Directorio::find(std::string name) const
 
 // =========================== Fichero ===========================
 
-Fichero::Fichero(size_t size) : INode(), _size(size) {}
+Fichero::Fichero(size_t size) : INode(INodeType::File), _size(size) {}
 size_t Fichero::size() const
 {
     return _size;
