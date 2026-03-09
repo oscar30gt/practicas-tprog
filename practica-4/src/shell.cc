@@ -2,14 +2,14 @@
  * @file shell.cc
  *
  * @authors
- * Hugo García Sánchez (930108)
+ * Hugo García Sanchez (930108)
  * Óscar Grimal Torres (926897)
  */
 
 #include <sstream>
 #include <vector>
-#include <iomanip>
 #include <iostream>
+#include <algorithm>
 
 #include "shell.h"
 
@@ -18,189 +18,188 @@
 #define CYAN "\033[36m"
 #define RESET "\033[0m"
 
-Shell::Shell() : _root(), _cwd() {}
-
 // ========================== HELPERS ==========================
 
-std::vector<std::string> Shell::resolvePath(const std::string &path) const
+// Divide un path en sus componentes, ignorando '/' consecutivos y los '.'.
+void tokenizePath(const std::string &path, std::vector<std::string> &out)
 {
-    std::vector<std::string> pathVec;
+    out.clear();
     std::istringstream iss(path);
     for (std::string tok; std::getline(iss, tok, '/');)
-        if (!tok.empty())
-            pathVec.push_back(tok);
+        if (!tok.empty() && tok != ".")
+            out.push_back(tok);
+}
 
-    // Punto de partida: path vacio para root o cwd si es relativo.
-    std::vector<std::string> normalized = path.starts_with('/')
-                                              ? std::vector<std::string>()
-                                              : _cwd;
+// ======================== CONSTRUCTOR ========================
 
-    // Normalizamos el path, resolviendo los "." y ".." y navegando entre directorios.
-    for (const auto &part : pathVec)
+// El constructor inicializa la raiz y la ruta activa con el directorio raiz
+Shell::Shell() : _cwdStack()
+{
+    // Inicialmente, el sistema de archivos solo contiene el directorio raíz.
+    // Para mantener vivo el inodo del directorio raíz, el shell mantiene un link a el.
+    _cwdStack.push_back({"/", Enlace("root", new Directorio())});
+}
+
+// ===================== METODOS INTERNOS ======================
+
+Shell::str_vec Shell::resolvePath(const std::string &path) const
+{
+    str_vec tokens;
+    tokenizePath(path, tokens);
+
+    // Si comienza por '/', partimos de la raiz, si no, del CWD actual
+    str_vec res = {};
+    if (!path.starts_with('/'))
+        for (size_t i = 1; i < _cwdStack.size(); i++)
+            res.push_back(_cwdStack[i].first);
+
+    for (const auto &part : tokens)
     {
         if (part == "..")
         {
-            if (normalized.size() <= 1) // No podemos subir mas alla del root.
-                throw arbol_ficheros_error("Cannot go above root directory");
-            normalized.pop_back();
+            if (res.empty())
+                throw arbol_ficheros_error("An error occurred while resolving the path: cannot go above root");
+            res.pop_back();
         }
-        else if (part != ".") // Ignoramos los "." porque no afectan a la ruta.
+        else
         {
-            normalized.push_back(part);
+            res.push_back(part);
         }
     }
-
-    return normalized;
+    return res;
 }
 
-INode *Shell::getNode(std::vector<std::string> pathVec) const
+INode *Shell::getNode(const str_vec &pathVec) const
 {
-    // Siempre se nos pide resolver un path absoluto, asi que partimos desde root.
-    INode *curr = const_cast<Directorio *>(&_root);
+    INode *curr = _cwdStack.front().second.operator->(); // Partimos de la raiz o del CWD actual, segun el caso
 
-    for (size_t i = 0; i < pathVec.size(); i++)
+    for (auto &part : pathVec)
     {
-        // Antes de buscar el siguiente nombre, comprobamos que el nodo actual es un directorio.
+        // Antes de navegar al siguiente nodo, comprobamos que el nodo actual es un directorio
         if (!curr->isDirectory())
             return nullptr;
 
-        curr = static_cast<Directorio *>(curr)->find(pathVec[i]);
-
-        // Si no existe el nombre, la ruta es invalida
+        curr = static_cast<Directorio *>(curr)->find(part);
         if (!curr)
             return nullptr;
     }
-
     return curr;
 }
 
-Directorio *Shell::getNode() const { return static_cast<Directorio *>(getNode(_cwd)); }
+Directorio *Shell::getNode() const
+{
+    // El último elemento de la pila de referencias es nuestro CWD
+    return static_cast<Directorio *>(_cwdStack.back().second.operator->());
+}
 
-// =========================== COMANDOS ===========================
+// ========================== COMANDOS =========================
 
 std::string Shell::pwd() const
 {
-    std::string output;
-    for (const auto &dir : _cwd)
-    {
-        if (dir != "/")
-            output += "/" + dir;
-    }
+    if (_cwdStack.size() == 1)
+        return "/";
 
-    return output.empty() ? "/" : output;
+    std::string output = "";
+    for (size_t i = 1; i < _cwdStack.size(); i++)
+        output += "/" + _cwdStack[i].first;
+
+    return output;
 }
 
 std::string Shell::ls() const
 {
-    std::string output = _cwd.empty() ? "" : (BLUE + std::string(".\n..\n") + RESET);
-
+    std::string output = _cwdStack.size() == 1 ? "" : (BLUE + std::string(".\n..\n") + RESET);
     auto currentDir = getNode();
+
     for (const auto &[name, node] : currentDir->getChildren())
     {
         output += node->isDirectory() ? YELLOW : CYAN;
         output += name + "\n";
     }
-
     return output + RESET;
 }
 
 std::string Shell::du() const
 {
     std::string output = "NAME            SIZE\n";
-
     auto currentDir = getNode();
+
     for (const auto &[name, node] : currentDir->getChildren())
     {
         output += node->isDirectory() ? YELLOW : CYAN;
         output += std::format("{:<16}{}B\n", name, node->size());
     }
-
     return output + RESET;
 }
 
 void Shell::vi(const std::string &name, int size)
 {
-    // El nombre del fichero no puede contener el caracter '/' porque es el separador de directorios.
     if (name.contains('/'))
         throw arbol_ficheros_error("Bad filename");
 
-    // Ver si ya existe un nodo con el mismo nombre en el directorio actual.
     auto currentDir = getNode();
-    auto child = currentDir->find(name);
+    INode *child = currentDir->find(name);
 
-    // Si no existe, crear un nuevo fichero con el tamaño dado.
     if (!child)
-    {
-        Fichero *newFile = new Fichero(size);
-        currentDir->addEntry(name, newFile);
-        return;
-    }
-
-    // Si ya existe el fichero, cambiar su tamaño al dado.
-    if (child->isFile())
-    {
+        currentDir->addEntry(name, new Fichero(size));
+    else if (child->isFile())
         static_cast<Fichero *>(child)->setSize(size);
-        return;
-    }
-
-    throw arbol_ficheros_error("Cannot change size. '" + name + "' is a directory");
+    else
+        throw arbol_ficheros_error("'" + name + "' is a directory");
 }
 
 void Shell::mkdir(const std::string &name)
 {
-    // El nombre del directorio no puede contener el caracter '/' porque es el separador de directorios.
     if (name.contains('/'))
         throw arbol_ficheros_error("Bad dirname");
 
-    // Ver si ya existe un nodo con el mismo nombre en el directorio actual.
     auto currentDir = getNode();
-    auto child = currentDir->find(name);
-
-    if (!child)
-    {
-        Directorio *newDir = new Directorio();
-        currentDir->addEntry(name, newDir);
-        return;
-    }
-
-    throw arbol_ficheros_error("Directory with name '" + name + "' already exists");
+    if (!currentDir->addEntry(name, new Directorio()))
+        throw arbol_ficheros_error("Node '" + name + "' already exists");
 }
 
-void Shell::cd(const std::string &path)
-{
-    auto nwd = resolvePath(path);
-    auto dir = getNode(nwd);
+void Shell::cd(const std::string &path) {
+    // Nuevo path absoluto
+    auto names = resolvePath(path);
+    
+    // Nuevo stack inicializado con la raiz.
+    std::vector<named_entry> nwdStack;
+    nwdStack.push_back(_cwdStack.front());
+    
+    // Navegamos para llenar la pila de navegacion
+    for (const auto& name : names) {
+        // El nodo actual es el ultimo de nuestra nueva pila
+        Directorio* curr = static_cast<Directorio*>(nwdStack.back().second.operator->());
+        INode* next = curr->find(name);
+        
+        // Validación fisica
+        if (!next) 
+            throw arbol_ficheros_error("cd: " + name + ": No such directory");
+        if (!next->isDirectory())
+            throw arbol_ficheros_error("cd: " + name + ": Not a directory");
+            
+        // Añadimos a la pila. Esto incrementa nlinks automáticamente.
+        nwdStack.push_back({name, Enlace(name, next)});
+    }
 
-    if (!dir)
-        throw arbol_ficheros_error("Directory '" + path + "' does not exist");
-
-    if (!dir->isDirectory())
-        throw arbol_ficheros_error("'" + path + "' is not a directory");
-
-    _cwd = nwd;
+    // Intercambiamos la pila de navegacion actual por la nueva.
+    _cwdStack = std::move(nwdStack);
 }
 
 void Shell::ln(const std::string &path, const std::string &name)
 {
-    // El nombre del enlace no puede contener el caracter '/' porque es el separador de directorios.
     if (name.contains('/'))
         throw arbol_ficheros_error("Bad link name");
 
-    // Nodo al que apunta el enlace.
     auto targetPathVec = resolvePath(path);
     auto targetNode = getNode(targetPathVec);
 
     if (!targetNode)
-        throw arbol_ficheros_error("'" + path + "' does not exist");
+        throw arbol_ficheros_error("Target '" + path + "' does not exist");
 
-    // Comprobamos que no exista un nodo con el mismo nombre en el directorio actual.
     auto currentDir = getNode();
-    auto child = currentDir->find(name);
-
-    if (child)
-        throw arbol_ficheros_error("Item with name '" + name + "' already exists");
-
-    currentDir->addEntry(name, targetNode);
+    if (!currentDir->addEntry(name, targetNode))
+        throw arbol_ficheros_error("Item '" + name + "' already exists");
 }
 
 std::string Shell::stat(const std::string &path) const
@@ -217,11 +216,16 @@ std::string Shell::stat(const std::string &path) const
 void Shell::rm(const std::string &path)
 {
     auto pathVec = resolvePath(path);
-    std::string filename = pathVec.back();
+    if (pathVec.empty())
+        throw arbol_ficheros_error("Cannot remove root");
 
-    // Obtenemos el directorio padre del nodo a eliminar.
+    std::string name = pathVec.back();
     pathVec.pop_back();
-    auto parent = getNode(pathVec);
 
-    static_cast<Directorio *>(parent)->removeEntry(filename);
+    INode *parentNode = getNode(pathVec);
+    if (!parentNode || !parentNode->isDirectory())
+        throw arbol_ficheros_error("Parent not found");
+
+    // Si el nodo esta en _cwdStack, nlinks seguira > 0 y no se borrara fisicamente
+    static_cast<Directorio *>(parentNode)->removeEntry(name);
 }

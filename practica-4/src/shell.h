@@ -20,14 +20,13 @@
  */
 class Shell
 {
-    /** Directorio raíz del sistema de archivos. */
-    const Directorio _root;
-    
-public:
-    /** Directorio de trabajo actual relativo a root. Es una pila, pero se implementa 
-        como un vector para poder recorrerla con mayor facilidad.
-        Ejemplo: ["home", "user"] representa el directorio "/home/user" */
-    std::vector<std::string> _cwd;
+    using str_vec = std::vector<std::string>;
+    using named_entry = std::pair<std::string, Enlace>;
+
+    /** RUTA ACTIVA (CWD): Secuencia de referencias a directorios.
+        Guardamos el nombre y el Enlace para mantener vivo el inodo 
+        y poder implementar pwd() eficientemente. */
+    std::vector<named_entry> _cwdStack;
 
     /**
      * Dado un path absoluto o relativo, lo normaliza en base al cwd.
@@ -35,16 +34,17 @@ public:
      * @returns Path absoluto en forma de vector de strings.
      * @throws `arbol_ficheros_error` Si el path es imposible de resolver (sube por encima del directorio raiz).
      */
-    std::vector<std::string> resolvePath(const std::string &path) const;
+    str_vec resolvePath(const std::string &path) const;
 
     /**
      * Dado un path absoluto en forma de vector de strings, obtiene el nodo al que apunta.
      * @param pathVec Path absoluto en forma de vector de strings.
      * @returns Puntero al nodo al que apunta el path, o `nullptr` si el path no existe.
      */
-    INode* getNode(std::vector<std::string> pathVec) const;
-    Directorio* getNode() const;
+    INode *getNode(const str_vec &pathVec) const;
+    Directorio *getNode() const;
 
+public:
     Shell();
     ~Shell() = default;
 

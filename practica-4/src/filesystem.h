@@ -14,14 +14,12 @@
 class Enlace;
 
 /**
- * Un nodo es una entidad que puede ser un directorio o un archivo. Cada nodo tiene
- * un nombre y puede ser referenciado por multiples enlaces.
+ * Un nodo es una entidad que puede ser un directorio o un archivo.
  * Funciona de manera similar a un inodo en un sistema de ficheros linux.
  */
 class INode
 {
-public:
-    /** Tipos de inodos */
+protected:
     enum INodeType
     {
         Directory,
@@ -29,14 +27,14 @@ public:
     };
 
 private:
-    /** Numero de enlaces al nodo. */
-    unsigned int _nlinks = 0;
-
+public:
     /** Tipo de este nodo. */
     const INodeType _type;
 
-public:
-    INode(INodeType type): _type(type) {}
+    /** Numero de enlaces al nodo. */
+    unsigned int _nlinks = 0;
+
+    INode(INodeType type) : _type(type) {}
     virtual ~INode() = default;
 
     /**
@@ -45,7 +43,10 @@ public:
      */
     virtual size_t size() const = 0;
 
+    /** Devuelve `true` si el nodo es un directorio, `false` en caso contrario. */
     constexpr bool isDirectory() const { return _type == Directory; };
+
+    /** Devuelve `true` si el nodo es un fichero, `false` en caso contrario. */
     constexpr bool isFile() const { return _type == File; };
 
     friend class Enlace;
@@ -127,19 +128,15 @@ public:
  */
 class Enlace
 {
-    /** Directorio padre: ubicación del enlace */
-    Directorio *_parent;
-
     /** Nodo al que apunta el enlace. */
     INode *_target;
 
 public:
     /**
      * @param name Nombre del enlace. Debe ser unico dentro del directorio padre.
-     * @param parent Directorio padre del enlace. No puede ser `nullptr`.
      * @param target inodo al que apunta el enlace. No puede ser `nullptr`.
      */
-    Enlace(std::string name, Directorio *parent, INode *target);
+    Enlace(std::string name, INode *target);
 
     // Sobreescribimos el constructor de copia y de movimiento para mantener
     // el conteo de enlaces correcto.

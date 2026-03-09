@@ -33,7 +33,7 @@ bool Directorio::addEntry(std::string name, INode *node)
 {
     if (_children.contains(name))
         return false;
-    _children.emplace(name, Enlace(name, this, node));
+    _children.emplace(name, Enlace(name, node));
     return true;
 }
 
@@ -68,25 +68,26 @@ void Fichero::setSize(size_t newSize)
 // =========================== Enlace ===========================
 
 Enlace::Enlace(const Enlace &other)
-    : _parent(other._parent), _target(other._target)
+    : _target(other._target)
 {
     _target->_nlinks++;
 }
 
+#include <iostream>
 Enlace::Enlace(Enlace &&other)
-    : _parent(other._parent), _target(other._target)
+    : _target(other._target)
 {
     other._target = nullptr;
 }
 
-Enlace::Enlace(std::string name, Directorio *parent, INode *target)
-    : _parent(parent), _target(target)
+Enlace::Enlace(std::string name, INode *target)
+    : _target(target)
 {
     target->_nlinks++;
 }
 
 Enlace::~Enlace()
-{
+{ 
     if (_target != nullptr && --_target->_nlinks == 0)
         delete _target;
 }
