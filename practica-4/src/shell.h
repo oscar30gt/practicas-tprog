@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "filesystem.h"
+#include "exceptions.h"
 
 /**
  * Clase que representa un shell de comandos. El shell mantiene un directorio raíz y un directorio
@@ -23,33 +24,23 @@ class Shell
     const Directorio _root;
     
 public:
-    /** Directorio de trabajo actual. Es una pila, pero se implementa 
-        como un vector para poder recorrerla con mayor facilidad */
+    /** Directorio de trabajo actual relativo a root. Es una pila, pero se implementa 
+        como un vector para poder recorrerla con mayor facilidad.
+        Ejemplo: ["home", "user"] representa el directorio "/home/user" */
     std::vector<std::string> _cwd;
 
-    /** 
-     * AUXILIAR
-     * Dado un path en forma de string, lo convierte a un vector de strings.
-     * @param path Ruta a convertir. Puede ser absoluta o relativa al directorio de trabajo actual.
-     * @returns Vector de strings con los nombres de los directorios en la ruta dada.
+    /**
+     * Dado un path absoluto o relativo, lo normaliza en base al cwd.
+     * @param path Path a resolver. Puede ser absoluto (comienza con '/') o relativo al directorio de trabajo actual.
+     * @returns Path absoluto en forma de vector de strings.
+     * @throws `arbol_ficheros_error` Si el path es imposible de resolver (sube por encima del directorio raiz).
      */
-    std::vector<std::string> path2Vec(const std::string &path) const;
+    std::vector<std::string> resolvePath(const std::string &path) const;
 
     /**
-     * AUXILIAR
-     * Dado un path en forma de vector de strings, resuelve la ruta absoluta correspondiente a esa ruta.
-     * @param pathVec Ruta al nodo a obtener. Puede ser absoluta o relativa al directorio de trabajo actual.
-     *                Si no se especifica, se resuelve el directorio de trabajo actual.
-     * @returns Puntero al nodo correspondiente a la ruta dada, o `nullptr` si no existe ningún nodo con esa ruta.
-     */
-    std::vector<std::string> resolvePath(std::vector<std::string> pathVec) const;
-
-    /**
-     * AUXILIAR
-     * Dado un path en forma de vector de strings, devuelve un puntero al directorio correspondiente a esa ruta.
-     * @param pathVec Ruta al directorio a obtener. Puede ser absoluta o relativa al directorio de trabajo actual.
-     *                Si no se especifica, se resuelve el directorio de trabajo actual.
-     * @returns Puntero al directorio correspondiente a la ruta dada, o `nullptr` si no existe ningún directorio con esa ruta.
+     * Dado un path absoluto en forma de vector de strings, obtiene el nodo al que apunta.
+     * @param pathVec Path absoluto en forma de vector de strings.
+     * @returns Puntero al nodo al que apunta el path, o `nullptr` si el path no existe.
      */
     INode* getNode(std::vector<std::string> pathVec) const;
     Directorio* getNode() const;

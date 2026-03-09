@@ -37,7 +37,7 @@ int main()
 
 		try
 		{
-			if ((cmd[0]=="exit") || (cmd[0]=="by"))
+			if ((cmd[0]=="exit") || (cmd[0]=="bye"))
 			{
 				done = true;
 			}
@@ -82,10 +82,10 @@ int main()
 				println(cerr,"Error sintactico: comando desconocido");
 			}
 		}
-		// catch (const arbol_ficheros_error& e)
-		// {
-		// 	println(cerr,"{}",e.what());
-		// }
+		catch (const arbol_ficheros_error& e)
+		{
+			println(cerr,"{}",e.what());
+		}
 		catch (const out_of_range& e)
 		{
 			println(cerr,"Error sintactico: parametros insuficientes");
