@@ -167,8 +167,10 @@ void Shell::mkdir(const std::string &name)
         throw bad_identifier_error("mkdir", name);
 
     auto currentDir = getNode();
-    if (!currentDir->addEntry(name, new Directorio())) // Intentamos crear el nuevo directorio.
+    if (currentDir->find(name))
         throw already_exists_error("mkdir", name);
+
+    currentDir->addEntry(name, new Directorio());
 }
 
 void Shell::cd(const std::string &path) {
