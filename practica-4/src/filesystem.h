@@ -43,6 +43,13 @@ public:
      */
     virtual size_t size() const = 0;
 
+    /**
+     * Comprueba si este nodo contiene al nodo `other`. (por ejemplo, si es un directorio que contiene a `other`)
+     * @param other Nodo que se quiere comprobar si está contenido.
+     * @returns `true` si este nodo contiene a `other`, `false` en caso contrario.
+     */
+    virtual bool contains(INode *other) const = 0;
+
     /** Devuelve `true` si el nodo es un directorio, `false` en caso contrario. */
     constexpr bool isDirectory() const { return _type == Directory; };
 
@@ -68,6 +75,9 @@ public:
     // El tamaño de un directorio es la suma de los tamaños de sus hijos.
     size_t size() const override;
 
+    // Un directorio contiene a otro nodo si alguno de sus hijos contiene a ese nodo.
+    bool contains(INode *other) const override;
+
     /**
      * Obtiene el contenido del directorio.
      * @return Mapa con los nodos contenidos en el directorio con pares <nombre, nodo>.
@@ -81,20 +91,20 @@ public:
      * @returns `true` si el elemento se ha creado correctamente, `false` si ya existia un
      * elemento con el mismo nombre y, por tanto, no se ha creado el nuevo elemento.
      */
-    bool addEntry(std::string name, INode *node);
+    bool addEntry(const std::string &name, INode *node);
 
     /**
      * Elimina un elemento del directorio. Si no existe el elemento, no se hace nada.
      * @param name Nombre del elemento a eliminar. Debe existir dentro del directorio.
      */
-    void removeEntry(std::string name);
+    void removeEntry(const std::string &name);
 
     /**
      * Busca un elemento dentro del directorio y devuelve su nodo.
      * @param name Nombre del elemento a buscar. Debe existir dentro del directorio.
      * @returns Puntero al nodo del elemento buscado, o `nullptr` si no existe el elemento.
      */
-    INode *find(std::string name) const;
+    INode *find(const std::string &name) const;
 };
 
 /**
@@ -115,6 +125,9 @@ public:
     // El tamaño de un fichero es el suyo propio.
     size_t size() const override;
 
+    // Un fichero no contiene a ningun nodo, por lo que solo se contiene a si mismo.
+    bool contains(INode *other) const override;
+
     /**
      * Cambia el tamaño del fichero a `newSize` bytes.
      * @param newSize Nuevo tamaño del fichero en bytes. Debe ser un numero positivo.
@@ -133,10 +146,9 @@ class Enlace
 
 public:
     /**
-     * @param name Nombre del enlace. Debe ser unico dentro del directorio padre.
-     * @param target inodo al que apunta el enlace. No puede ser `nullptr`.
+     * @param target inodo al que apunta el enlace.
      */
-    Enlace(std::string name, INode *target);
+    Enlace(INode *target);
 
     // Sobreescribimos el constructor de copia y de movimiento para mantener
     // el conteo de enlaces correcto.

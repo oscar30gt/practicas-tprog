@@ -24,8 +24,7 @@ class Shell
     using named_entry = std::pair<std::string, Enlace>;
 
     /** RUTA ACTIVA (CWD): Secuencia de referencias a directorios.
-        Guardamos el nombre y el Enlace para mantener vivo el inodo 
-        y poder implementar pwd() eficientemente. */
+        Guardamos el nombre y el enlace para mantener vivo el inodo */
     std::vector<named_entry> _cwdStack;
 
     /**

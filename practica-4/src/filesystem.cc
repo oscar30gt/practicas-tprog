@@ -20,6 +20,17 @@ size_t Directorio::size() const
     return total_size;
 }
 
+bool Directorio::contains(INode *other) const
+{
+    if (this == other) // Early return para evitar recorrer todo el arbol.
+        return true;
+
+    for (const auto &[_, link] : _children)
+        if (link->contains(other))
+            return true;
+    return false;
+}
+
 std::map<std::string, INode *> Directorio::getChildren() const
 {
     // Convertimos enlaces a nodos para facilitar su uso
@@ -29,20 +40,20 @@ std::map<std::string, INode *> Directorio::getChildren() const
     return children;
 }
 
-bool Directorio::addEntry(std::string name, INode *node)
+bool Directorio::addEntry(const std::string &name, INode *node)
 {
     if (_children.contains(name))
         return false;
-    _children.emplace(name, Enlace(name, node));
+    _children.emplace(name, Enlace(node));
     return true;
 }
 
-void Directorio::removeEntry(std::string name)
+void Directorio::removeEntry(const std::string &name)
 {
     _children.erase(name);
 }
 
-INode *Directorio::find(std::string name) const
+INode *Directorio::find(const std::string &name) const
 {
     auto iterator = _children.find(name);
     if (iterator == _children.end())
@@ -65,30 +76,28 @@ void Fichero::setSize(size_t newSize)
     _size = newSize;
 }
 
+bool Fichero::contains(INode *other) const
+{
+    // Un fichero solo contiene a si mismo
+    return this == other;
+}
+
 // =========================== Enlace ===========================
 
-Enlace::Enlace(const Enlace &other)
-    : _target(other._target)
+Enlace::Enlace(INode *target) 
+    : _target(target) 
 {
-    _target->_nlinks++;
+    if (_target) {
+        _target->_nlinks++;
+    }
 }
 
-#include <iostream>
-Enlace::Enlace(Enlace &&other)
-    : _target(other._target)
-{
-    other._target = nullptr;
-}
-
-Enlace::Enlace(std::string name, INode *target)
-    : _target(target)
-{
-    target->_nlinks++;
-}
+Enlace::Enlace(const Enlace &other) : Enlace(other._target) { }
+Enlace::Enlace(Enlace &&other) : _target(other._target) { other._target = nullptr; }
 
 Enlace::~Enlace()
 { 
-    if (_target != nullptr && --_target->_nlinks == 0)
+    if (_target && --_target->_nlinks == 0)
         delete _target;
 }
 
