@@ -19,22 +19,11 @@ class Enlace;
  */
 class INode
 {
-protected:
-    enum INodeType
-    {
-        Directory,
-        File
-    };
-
-private:
-public:
-    /** Tipo de este nodo. */
-    const INodeType _type;
-
     /** Numero de enlaces al nodo. */
     unsigned int _nlinks = 0;
 
-    INode(INodeType type) : _type(type) {}
+public:
+    INode() = default;
     virtual ~INode() = default;
 
     /**
@@ -51,10 +40,10 @@ public:
     virtual bool contains(INode *other) const = 0;
 
     /** Devuelve `true` si el nodo es un directorio, `false` en caso contrario. */
-    constexpr bool isDirectory() const { return _type == Directory; };
+    bool isDirectory() const;
 
     /** Devuelve `true` si el nodo es un fichero, `false` en caso contrario. */
-    constexpr bool isFile() const { return _type == File; };
+    bool isFile() const;
 
     friend class Enlace;
 };
@@ -80,7 +69,7 @@ public:
 
     /**
      * Obtiene el contenido del directorio.
-     * @return Mapa con los nodos contenidos en el directorio con pares <nombre, nodo>.
+     * @returns Mapa con los nodos contenidos en el directorio con pares <nombre, nodo>.
      */
     std::map<std::string, INode *> getChildren() const;
 
@@ -95,13 +84,13 @@ public:
 
     /**
      * Elimina un elemento del directorio. Si no existe el elemento, no se hace nada.
-     * @param name Nombre del elemento a eliminar. Debe existir dentro del directorio.
+     * @param name Nombre del elemento a eliminar.
      */
     void removeEntry(const std::string &name);
 
     /**
      * Busca un elemento dentro del directorio y devuelve su nodo.
-     * @param name Nombre del elemento a buscar. Debe existir dentro del directorio.
+     * @param name Nombre del elemento a buscar.
      * @returns Puntero al nodo del elemento buscado, o `nullptr` si no existe el elemento.
      */
     INode *find(const std::string &name) const;
@@ -137,7 +126,7 @@ public:
 
 /**
  * Un enlace es una referencia a un nodo (directorio o archivo) en el sistema de ficheros.
- * Owner: Directorio padre.
+ * El directorio padre es el owner del enlace.
  */
 class Enlace
 {

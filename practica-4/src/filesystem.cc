@@ -8,9 +8,21 @@
 
 #include "filesystem.h"
 
+// =========================== INode ===========================
+
+bool INode::isDirectory() const
+{
+    return dynamic_cast<const Directorio *>(this) != nullptr;
+}
+
+bool INode::isFile() const
+{
+    return dynamic_cast<const Fichero *>(this) != nullptr;
+}
+
 // =========================== Directorio ===========================
 
-Directorio::Directorio() : INode(INodeType::Directory) {}
+Directorio::Directorio() : INode() {}
 
 size_t Directorio::size() const
 {
@@ -22,7 +34,7 @@ size_t Directorio::size() const
 
 bool Directorio::contains(INode *other) const
 {
-    if (this == other) // Early return para evitar recorrer todo el arbol.
+    if (this == other)
         return true;
 
     for (const auto &[_, link] : _children)
@@ -65,7 +77,7 @@ INode *Directorio::find(const std::string &name) const
 
 // =========================== Fichero ===========================
 
-Fichero::Fichero(size_t size) : INode(INodeType::File), _size(size) {}
+Fichero::Fichero(size_t size) : INode(), _size(size) {}
 size_t Fichero::size() const
 {
     return _size;
@@ -78,7 +90,7 @@ void Fichero::setSize(size_t newSize)
 
 bool Fichero::contains(INode *other) const
 {
-    // Un fichero solo contiene a si mismo
+    // Un fichero solo se contiene a si mismo
     return this == other;
 }
 
@@ -87,9 +99,8 @@ bool Fichero::contains(INode *other) const
 Enlace::Enlace(INode *target) 
     : _target(target) 
 {
-    if (_target) {
+    if (_target)
         _target->_nlinks++;
-    }
 }
 
 Enlace::Enlace(const Enlace &other) : Enlace(other._target) { }

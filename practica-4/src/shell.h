@@ -20,11 +20,19 @@
  */
 class Shell
 {
+    // Vector de strings
     using str_vec = std::vector<std::string>;
+
+    // Par nombre-enlace
     using named_entry = std::pair<std::string, Enlace>;
 
-    /** RUTA ACTIVA (CWD): Secuencia de referencias a directorios.
-        Guardamos el nombre y el enlace para mantener vivo el inodo */
+    /** 
+     * RUTA ACTIVA (CWD): Secuencia de referencias a directorios.
+     * Las referencias son enlaces como los que se encuentran en los directorios,
+     * pero sin estar asociados a ninguno. Esto mantiene vivo el inodo
+     * aunque borremos el directorio que lo contiene.
+     * Cada enlace va asociado a un nombre.
+     */
     std::vector<named_entry> _cwdStack;
 
     /**
@@ -37,7 +45,7 @@ class Shell
 
     /**
      * Dado un path absoluto en forma de vector de strings, obtiene el nodo al que apunta.
-     * @param pathVec Path absoluto en forma de vector de strings.
+     * @param pathVec Path absoluto en forma de vector de strings. Si no se especifica, cwd.
      * @returns Puntero al nodo al que apunta el path, o `nullptr` si el path no existe.
      */
     INode *getNode(const str_vec &pathVec) const;
@@ -47,7 +55,7 @@ public:
     Shell();
     ~Shell() = default;
 
-    // COMANDOS
+    // ================== COMANDOS ==================
 
     // Imprime el directorio de trabajo actual.
     std::string pwd() const;

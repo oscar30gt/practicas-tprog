@@ -1,3 +1,11 @@
+/**
+ * @file exceptions.h
+ *
+ * @authors
+ * Hugo García Sánchez (930108)
+ * Óscar Grimal Torres (926897)
+ */
+
 #include <string>
 #include <stdexcept>
 

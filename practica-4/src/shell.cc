@@ -3,13 +3,12 @@
  *
  * @authors
  * Hugo García Sanchez (930108)
- * oscar Grimal Torres (926897)
+ * Óscar Grimal Torres (926897)
  */
 
 #include <sstream>
 #include <vector>
 #include <iostream>
-#include <algorithm>
 #include <format>
 
 #include "shell.h"
@@ -23,7 +22,8 @@ using namespace std;
 // ========================== HELPERS ==========================
 
 // Divide un path en sus componentes, ignorando '/' consecutivos y los '.'.
-void tokenizePath(const std::string &path, std::vector<std::string> &out)
+// Por ejemplo, "///a//b/./c" se dividiria en ["a", "b", "c"].
+void splitPath(const std::string &path, std::vector<std::string> &out)
 {
     out.clear();
     std::istringstream iss(path);
@@ -47,7 +47,7 @@ Shell::Shell() : _cwdStack()
 Shell::str_vec Shell::resolvePath(const std::string &path) const
 {
     str_vec tokens;
-    tokenizePath(path, tokens);
+    splitPath(path, tokens);
 
     // Si comienza por '/', partimos de la raiz, si no, del CWD actual.
     str_vec res = {};
@@ -146,7 +146,7 @@ std::string Shell::du() const
 void Shell::vi(const std::string &name, int size)
 {
     // Validamos el nombre del fichero a crear o modificar
-    if (name.contains('/'))
+    if (name.contains('/') || name == "." || name == "..")
         throw bad_identifier_error("vi", name);
 
     auto currentDir = getNode();
@@ -219,7 +219,7 @@ void Shell::ln(const std::string &path, const std::string &name)
         throw already_exists_error("ln", name);
 
     if (targetNode->contains(currentDir))
-        throw illegal_action_error("ln", "This link would create circular reference in the directory tree.");
+        throw illegal_action_error("ln", "This link would create a circular reference in the directory tree.");
 
     currentDir->addEntry(name, targetNode);
 }
