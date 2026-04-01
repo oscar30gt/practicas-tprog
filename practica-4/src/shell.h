@@ -38,10 +38,10 @@ class Shell
     /**
      * Dado un path absoluto o relativo, lo normaliza en base al cwd.
      * @param path Path a resolver. Puede ser absoluto (comienza con '/') o relativo al directorio de trabajo actual.
-     * @returns Path absoluto en forma de vector de strings.
+     * @param[out] out Vector de strings donde se guardara el resultado de la resolucion del path. El vector resultante representa un path absoluto.
      * @throws `arbol_ficheros_error` Si el path es imposible de resolver (sube por encima del directorio raiz).
      */
-    str_vec resolvePath(const std::string &path) const;
+    void resolvePath(const std::string &path, str_vec &out) const;
 
     /**
      * Dado un path absoluto en forma de vector de strings, obtiene el nodo al que apunta.

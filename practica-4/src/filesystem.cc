@@ -45,7 +45,7 @@ bool Directorio::contains(INode *other) const
 
 std::map<std::string, INode *> Directorio::getChildren() const
 {
-    // Convertimos enlaces a nodos para facilitar su uso
+    // Mapeamos el contenido del directorio de enlaces a nodos
     std::map<std::string, INode *> children;
     for (const auto &[name, link] : _children)
         children[name] = link.operator->();

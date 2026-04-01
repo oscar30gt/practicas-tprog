@@ -44,37 +44,36 @@ Shell::Shell() : _cwdStack()
 
 // ===================== METODOS INTERNOS ======================
 
-Shell::str_vec Shell::resolvePath(const std::string &path) const
+void Shell::resolvePath(const std::string &path, Shell::str_vec &out) const
 {
     str_vec tokens;
     splitPath(path, tokens);
 
     // Si comienza por '/', partimos de la raiz, si no, del CWD actual.
-    str_vec res = {};
+    out.clear();
     if (!path.starts_with('/'))
         for (size_t i = 1; i < _cwdStack.size(); i++)
-            res.push_back(_cwdStack[i].first);
+            out.push_back(_cwdStack[i].first);
 
     // Procesamos cada parte del path.
     for (const auto &part : tokens)
     {
         if (part == "..")
         {
-            if (res.empty())
+            if (out.empty())
                 throw illegal_action_error("path resolution", "Cannot go above root.");
-            res.pop_back();
+            out.pop_back();
         }
         else
         {
-            res.push_back(part);
+            out.push_back(part);
         }
     }
-    return res;
 }
 
 INode *Shell::getNode(const str_vec &pathVec) const
 {
-    // Siempre empezamos desde la raiz, 
+    // Siempre empezamos desde la raiz,
     // pues se nos garantiza que el pathVec es absoluto.
     INode *curr = _cwdStack.front().second.operator->();
 
@@ -89,7 +88,7 @@ INode *Shell::getNode(const str_vec &pathVec) const
         if (!curr)
             return nullptr;
 
-        // En la ultima iteracion, curr puede ser cualquier tipo de inodo, 
+        // En la ultima iteracion, curr puede ser cualquier tipo de inodo,
         // ya que puede ser la ruta a un fichero y no a un directorio.
     }
     return curr;
@@ -173,26 +172,29 @@ void Shell::mkdir(const std::string &name)
     currentDir->addEntry(name, new Directorio());
 }
 
-void Shell::cd(const std::string &path) {
+void Shell::cd(const std::string &path)
+{
     // Nuevo path absoluto
-    auto names = resolvePath(path);
-    
+    str_vec names;
+    resolvePath(path, names);
+
     // Nuevo stack inicializado con la raiz.
     std::vector<named_entry> nwdStack;
     nwdStack.push_back(_cwdStack.front());
-    
+
     // Navegamos para llenar la pila de navegacion
-    for (const auto& name : names) {
+    for (const auto &name : names)
+    {
         // El nodo actual es el ultimo de nuestra nueva pila
-        Directorio* curr = static_cast<Directorio*>(nwdStack.back().second.operator->());
-        INode* next = curr->find(name);
-        
+        Directorio *curr = static_cast<Directorio *>(nwdStack.back().second.operator->());
+        INode *next = curr->find(name);
+
         // Validacion fisica de que el directorio existe
-        if (!next) 
+        if (!next)
             throw path_not_found_error("cd", name);
         if (!next->isDirectory())
             throw invalid_type_error("cd", name, "directory");
-            
+
         // Añadimos a la pila. Esto incrementa nlinks automáticamente.
         nwdStack.push_back({name, Enlace(next)});
     }
@@ -204,18 +206,19 @@ void Shell::cd(const std::string &path) {
 void Shell::ln(const std::string &path, const std::string &name)
 {
     // Validamos el nombre del enlace a crear
-    if (name.contains('/'))
+    if (name.contains('/') || name == "." || name == "..")
         throw bad_identifier_error("ln", name);
 
     // Nodo al que lleva el enlace a crear
-    auto targetPathVec = resolvePath(path);
+    str_vec targetPathVec;
+    resolvePath(path, targetPathVec);
     auto targetNode = getNode(targetPathVec);
 
     if (!targetNode)
         throw path_not_found_error("ln", path);
 
     auto currentDir = getNode();
-    if (currentDir->find(name)) 
+    if (currentDir->find(name))
         throw already_exists_error("ln", name);
 
     if (targetNode->contains(currentDir))
@@ -226,7 +229,8 @@ void Shell::ln(const std::string &path, const std::string &name)
 
 std::string Shell::stat(const std::string &path) const
 {
-    auto pathVec = resolvePath(path);
+    str_vec pathVec;
+    resolvePath(path, pathVec);
     auto node = getNode(pathVec);
 
     if (!node)
@@ -237,7 +241,8 @@ std::string Shell::stat(const std::string &path) const
 
 void Shell::rm(const std::string &path)
 {
-    auto pathVec = resolvePath(path);
+    str_vec pathVec;
+    resolvePath(path, pathVec);
     if (pathVec.empty())
         throw illegal_action_error("rm", "Cannot remove root directory.");
 
