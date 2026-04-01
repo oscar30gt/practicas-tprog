@@ -57,7 +57,7 @@ public:
 
     // ================== COMANDOS ==================
 
-    // Imprime el directorio de trabajo actual.
+    // Devuelve el path absoluto del directorio de trabajo actual.
     std::string pwd() const;
 
     // Lista el contenido del directorio de trabajo actual.

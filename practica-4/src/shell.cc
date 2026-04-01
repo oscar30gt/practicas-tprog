@@ -250,7 +250,9 @@ void Shell::rm(const std::string &path)
     std::string name = pathVec.back();
     pathVec.pop_back();
     INode *parentNode = getNode(pathVec);
-    if (!parentNode || !parentNode->isDirectory())
+
+    // Validamos que el nodo padre existe, es un directorio y contiene al nodo a eliminar
+    if (!parentNode || !parentNode->isDirectory() || !static_cast<Directorio *>(parentNode)->find(name))
         throw path_not_found_error("rm", path);
 
     // Si el nodo esta en _cwdStack, nlinks seguira > 0 y no se borrara fisicamente hasta que no se salga de el.
