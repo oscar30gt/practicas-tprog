@@ -47,3 +47,6 @@
 
 # java class files
 *.class
+
+# Haskell
+*.hi
