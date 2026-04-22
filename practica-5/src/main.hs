@@ -4,7 +4,7 @@ import SVG
 main :: IO ()
 main = do
   -- Figuras básicas
-  savesvg "triangulo" (tplot (1,120,(0,0),0) triangleCommands)
+  savesvg "triangulo" (tplot (1,120,(0,0),180) triangleCommands)
   savesvg "cuadrado" (tplot (1,90,(0,0),0) squareCommands)
   savesvg "circulo" (tplot (1,10,(0,0),0) (circleCommands 36))
   -- L-Systems

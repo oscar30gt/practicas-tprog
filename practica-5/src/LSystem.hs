@@ -4,6 +4,7 @@ module LSystem (
 ) where
 
 import Turtle
+import Data.Char (isUpper)
 
 -- Función para generar la lista de posiciones a partir de las órdenes de la tortuga
 tplot :: Turtle -> String -> [Position]
@@ -15,30 +16,30 @@ tplot tortuga ordenes = reverse (recorrer tortuga ordenes [obtenerPos tortuga])
 
     -- Función recursiva para recorrer las órdenes de la tortuga y acumular las posiciones
     recorrer :: Turtle -> String -> [Position] -> [Position]
-    recorrer tortugaActual [] puntos = puntos -- Si no hay más órdenes, devuelve las posiciones acumuladas
+    recorrer tortugaActual [] puntos = puntos
     recorrer tortugaActual (c:cs) puntos
-      | c == '>'  =  -- Si la orden es '>'
-          let nuevaTortuga = moveTurtle tortugaActual Forward -- Mueve la tortuga hacia adelante
-          in recorrer nuevaTortuga cs (obtenerPos nuevaTortuga : puntos)  -- Agrega la nueva posición a la lista de puntos y continúa recorriendo
-      | c == '+'  =  -- Si la orden es '+'
-          recorrer (moveTurtle tortugaActual TurnRight) cs puntos -- Gira la tortuga a la derecha y continúa recorriendo
-      | c == '-'  =  -- Si la orden es '-'
-          recorrer (moveTurtle tortugaActual TurnLeft) cs puntos  -- Gira la tortuga a la izquierda y continúa recorriendo
-      | c >= 'A' && c <= 'Z' =  -- Si la orden es una letra mayúscula (representa un comando de movimiento)
-          let nuevaTortuga = moveTurtle tortugaActual Forward -- Mueve la tortuga hacia adelante
-          in recorrer nuevaTortuga cs (obtenerPos nuevaTortuga : puntos)  -- Agrega la nueva posición a la lista de puntos y continúa recorriendo
-      | otherwise = -- Si la orden no es reconocida
-          recorrer tortugaActual cs puntos  -- Continúa recorriendo sin cambiar la tortuga ni agregar puntos
+      | c == '>'  =
+          let nuevaTortuga = moveTurtle tortugaActual Forward
+          in recorrer nuevaTortuga cs (obtenerPos nuevaTortuga : puntos)
+      | c == '+'  =
+          recorrer (moveTurtle tortugaActual TurnRight) cs puntos
+      | c == '-'  =
+          recorrer (moveTurtle tortugaActual TurnLeft) cs puntos
+      | isUpper c =
+          let nuevaTortuga = moveTurtle tortugaActual Forward
+          in recorrer nuevaTortuga cs (obtenerPos nuevaTortuga : puntos)
+      | otherwise =
+          recorrer tortugaActual cs puntos
 
 -- Función para generar la cadena resultante del sistema L a partir de las reglas, el axioma y el número de iteraciones
 lsystem :: (Char -> String) -> String -> Int -> String
-lsystem reglas axioma 0 = axioma -- Si el número de iteraciones es 0, devuelve el axioma sin cambios
-lsystem reglas axioma n = lsystem reglas (reescribir reglas axioma) (n - 1) -- Si no, reescribe el axioma y llama recursivamente
+lsystem reglas axioma 0 = axioma
+lsystem reglas axioma n = lsystem reglas (reescribir reglas axioma) (n - 1)
 
 -- Función auxiliar para reescribir la cadena según las reglas dadas
 reescribir :: (Char -> String) -> String -> String
-reescribir reglas [] = [] -- Si la cadena está vacía, devuelve una cadena vacía
-reescribir reglas (x:xs) = reglas x ++ reescribir reglas xs -- Reescribe el primer carácter según las reglas y luego reescribe el resto de la cadena
+reescribir reglas [] = []
+reescribir reglas (x:xs) = reglas x ++ reescribir reglas xs
 
 -- Funciones para generar comandos de figuras básicas
 triangleCommands :: String
