@@ -26,6 +26,12 @@ instance Show a => Show (BinaryTree a) where
 -- Función auxiliar para mostrar el árbol de forma legible
 showTree :: Show a => String -> BinaryTree a -> [String]
 showTree _ Empty = ["()"]
+
+-- Caso hoja: no mostrar hijos vacíos
+showTree prefix (Node x Empty Empty) =
+    [prefix ++ show x]
+
+-- Caso general
 showTree prefix (Node x l r) =
     (prefix ++ show x) :
     showChild prefix l ++
@@ -35,13 +41,18 @@ showTree prefix (Node x l r) =
 showChild :: Show a => String -> BinaryTree a -> [String]
 showChild prefix t =
     case t of
-        Empty -> [prefix ++ "\\- ()"]
+        Empty ->
+            [prefix ++ "\\- ()"]
+
         Node _ _ _ ->
-            let linesSub = showTree (prefix ++ "\t") t
-            in case linesSub of
-                [] -> []
-                (h:ts) ->
-                    (prefix ++ "\\- " ++ dropWhile (== '\t') h) : ts
+            let
+                linesSub = showTree (prefix ++ "   ") t
+            in
+                case linesSub of
+                    [] -> []
+
+                    (h:ts) ->
+                        (prefix ++ "\\- " ++ drop (length prefix + 3) h) : ts
 
 -- Función para agregar un elemento al árbol manteniendo el orden
 add :: Ord a => BinaryTree a -> a -> BinaryTree a
@@ -66,8 +77,9 @@ buildBalanced' xs =
     let
         mid = length xs `div` 2
         (leftPart, rest) = splitAt mid xs
-        x = head rest
-        rightCandidates = tail rest
+
+        -- rest siempre tiene al menos un elemento
+        (x:rightCandidates) = rest
 
         -- Ajuste para duplicados (>= a la derecha)
         (leftFinal, duplicates) = span (< x) leftPart
@@ -103,8 +115,13 @@ balance t = buildBalanced (inorder t)
 -- Función para obtener los elementos del árbol que están entre dos valores dados
 between :: Ord a => BinaryTree a -> a -> a -> [a]
 between Empty _ _ = []
+
 between (Node x l r) xmin xmax
-    | x < xmin = between r xmin xmax
-    | x > xmax = between l xmin xmax
+    | x < xmin =
+        between r xmin xmax
+
+    | x > xmax =
+        between l xmin xmax
+
     | otherwise =
-        between l xmin xmax ++ [x] ++ between r xmin xmax
+        [x] ++ between l xmin xmax ++ between r xmin xmax
